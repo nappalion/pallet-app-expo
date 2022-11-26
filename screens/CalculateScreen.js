@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, Modal, TouchableOpacity, ScrollView, TouchableWithoutFeedback } from "react-native";
 import Button from "../components/Button"
 import { COLORS } from '../colors';
+import TextInput from '../components/TextInput';
 
 const styles = StyleSheet.create({
     container: {
@@ -13,12 +14,13 @@ const styles = StyleSheet.create({
     scanButton: {
         width: "100%",
         backgroundColor: COLORS.dark_gray,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        marginBottom: 20,
     },
     calculateButton: {
         width: "100%",
         backgroundColor: COLORS.purple,
-        alignSelf: 'center'
+        alignSelf: 'center',
     },
     buttonText: {
         color: 'white',
@@ -42,6 +44,21 @@ const styles = StyleSheet.create({
     },
     textStyle: {
         textAlign: 'center'
+    },
+    textInput: {
+        borderRadius: 10,
+        borderWidth: 1,
+        paddingTop: 15,
+        paddingBottom: 15,
+        paddingLeft: 20,
+        paddingRight: 20,
+        justifyContent: 'space-between'
+    },
+    buttons: {
+        width: "100%"
+    },
+    textInputs: {
+        flex: 1
     }
 })
 
@@ -96,31 +113,85 @@ const CalculateScreen = ({ navigation }) => {
                 >
                         <TouchableWithoutFeedback>
                             <View style={styles.modal}>
-                                <Text style={styles.textStyle}>Barcode: {barcodeData}</Text>
-                                <Button 
-                                    style={styles.scanButton}
-                                    textStyle={styles.buttonText}
-                                    text={'Tap to Scan Again'}
-                                    onPress={() => {
-                                        setModalVisible(false);
-                                        setScanned(false); 
-                                    }} 
-                                /> 
-                                <Button 
-                                    style={styles.calculateButton}
-                                    textStyle={styles.buttonText}
-                                    text={'Calculate'}
-                                    onPress={() => {
-                                        navigation.navigate('Results')
-                                    }} 
-                                /> 
+                                <Text style={styles.textStyle}>Item Information</Text>
+                                <View style={styles.textInputs}>
+                                    <TextInput 
+                                        value={barcodeData}
+                                        header="Barcode No."
+                                        container={{marginBottom: 10}}
+                                        style={styles.textInput}
+                                        borderColor={COLORS.dark_gray}
+                                        onChangeText={(text) => {
+                                                setBarcodeData(text)
+                                            }
+                                        }
+                                        placeholder="Enter a barcode number"
+                                    />
+                                    <TextInput 
+                                        value={barcodeData}
+                                        header="Length"
+                                        container={{marginBottom: 10}}
+                                        style={styles.textInput}
+                                        borderColor={COLORS.dark_gray}
+                                        onChangeText={(text) => {
+                                                setBarcodeData(text)
+                                            }
+                                        }
+                                        placeholder="Enter a length"
+                                    />
+                                    <TextInput 
+                                        value={barcodeData}
+                                        header="Width"
+                                        container={{marginBottom: 10}}
+                                        style={styles.textInput}
+                                        borderColor={COLORS.dark_gray}
+                                        onChangeText={(text) => {
+                                                setBarcodeData(text)
+                                            }
+                                        }
+                                        placeholder="Enter a width"
+                                    />
+                                    <TextInput 
+                                        value={barcodeData}
+                                        header="Height"
+                                        container={{marginBottom: 10}}
+                                        style={styles.textInput}
+                                        borderColor={COLORS.dark_gray}
+                                        onChangeText={(text) => {
+                                                setBarcodeData(text)
+                                            }
+                                        }
+                                        placeholder="Enter a height"
+                                    />
+                                </View>
+                                
+                                <View style={styles.buttons}>
+                                    <Button 
+                                        style={styles.scanButton}
+                                        textStyle={styles.buttonText}
+                                        text={'Tap to Scan Again'}
+                                        onPress={() => {
+                                            setModalVisible(false);
+                                            setScanned(false); 
+                                        }} 
+                                    /> 
+                                    <Button 
+                                        style={styles.calculateButton}
+                                        textStyle={styles.buttonText}
+                                        text={'Calculate'}
+                                        onPress={() => {
+                                            setModalVisible(false);
+                                            setScanned(false); 
+                                            navigation.navigate('Results')
+                                        }} 
+                                    /> 
+                                </View>
                             </View>
                         </TouchableWithoutFeedback>
                     
                 </TouchableOpacity>
             </Modal>
             <BarCodeScanner
-                text="Scan Again"
                 onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                 style={StyleSheet.absoluteFill}
             />

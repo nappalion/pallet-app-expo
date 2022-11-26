@@ -49,7 +49,6 @@ const LandingScreen = ({ navigation }) => {
                 style={styles.button} 
                 textStyle={styles.buttonText}
                 onPress={() => navigation.navigate('Calculate')}>
-
             </Button>
         </SafeAreaView>
     );
