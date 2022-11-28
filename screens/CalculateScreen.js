@@ -66,6 +66,10 @@ const CalculateScreen = ({ navigation }) => {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
 
+    const [length, setLength] = useState();
+    const [width, setWidth] = useState();
+    const [height, setHeight] = useState();
+
     useEffect(() => {
         const getBarCodeScannerPermissions = async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -128,37 +132,37 @@ const CalculateScreen = ({ navigation }) => {
                                         placeholder="Enter a barcode number"
                                     />
                                     <TextInput 
-                                        value={barcodeData}
+                                        value={length}
                                         header="Length"
                                         container={{marginBottom: 10}}
                                         style={styles.textInput}
                                         borderColor={COLORS.dark_gray}
                                         onChangeText={(text) => {
-                                                setBarcodeData(text)
+                                                setLength(text)
                                             }
                                         }
                                         placeholder="Enter a length"
                                     />
                                     <TextInput 
-                                        value={barcodeData}
+                                        value={width}
                                         header="Width"
                                         container={{marginBottom: 10}}
                                         style={styles.textInput}
                                         borderColor={COLORS.dark_gray}
                                         onChangeText={(text) => {
-                                                setBarcodeData(text)
+                                                setWidth(text)
                                             }
                                         }
                                         placeholder="Enter a width"
                                     />
                                     <TextInput 
-                                        value={barcodeData}
+                                        value={height}
                                         header="Height"
                                         container={{marginBottom: 10}}
                                         style={styles.textInput}
                                         borderColor={COLORS.dark_gray}
                                         onChangeText={(text) => {
-                                                setBarcodeData(text)
+                                                setHeight(text)
                                             }
                                         }
                                         placeholder="Enter a height"
