@@ -10,6 +10,24 @@ function zeros([length, ...rest], type) {
     return new type(length);
 }
 
+function printPallet(pallet) {
+    console.log(pallet.length); // 52 h/z
+    console.log(pallet[0].length); // 48 l/y
+    console.log(pallet[0][0].length); // 40 w/x
+
+    for (let z = 0; z < pallet.length; z++) {
+        for (let y = 0; y < pallet[0].length; y++) {
+            width = "";
+            for (let x = 0; x < pallet[0][0].length; x++) {
+                width += pallet[z][y][x] + ' ';
+            }
+            console.log(width);
+        }
+        console.log("");
+        console.log("");
+    }
+}
+
 function calculateConfiguration(l, w, h) {
     let boxesPlaced = 0;
     
@@ -214,6 +232,9 @@ function calculateConfiguration(l, w, h) {
     }
 
     console.log(`${bestPlaced} is the best placed!`);
+
+    printPallet(bestPallet);
+
     return bestPallet;
 }
 
@@ -227,4 +248,5 @@ h = 10;
 
 console.log(`Test for ${l}, ${w}, ${h}:`);
 //console.log(calculateConfiguration(l, w, h));
-calculateConfiguration(l, w, h)
+calculateConfiguration(l, w, h);
+
