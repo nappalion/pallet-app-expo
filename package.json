@@ -9,8 +9,11 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@miblanchard/react-native-slider": "^2.1.0",
     "@react-navigation/native": "^6.0.14",
     "@react-navigation/native-stack": "^6.9.2",
+    "@react-three/drei": "^9.46.0",
+    "@react-three/fiber": "^8.9.1",
     "expo": "~46.0.16",
     "expo-barcode-scanner": "~11.4.0",
     "expo-gl": "~11.4.0",

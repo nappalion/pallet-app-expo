@@ -1,68 +1,61 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { View } from 'react-native'
-import { Scene, Mesh, MeshBasicMaterial, PerspectiveCamera, BoxGeometry} from "three"
-import { Renderer } from "expo-three"
-import { GLView } from 'expo-gl';
+import { Canvas, useFrame, useThree } from '@react-three/fiber/native'
+import {Slider} from '@miblanchard/react-native-slider';
+
+
+
 
 const ResultsScreen = ({ navigation }) => {
 
+    const [rotation, setRotation] = useState(0)
 
-    const onContextCreate = async (gl) => {
-        // THREE.js code
-        const scene = new Scene()
-        const camera = new PerspectiveCamera(
-            75,
-            gl.drawingBufferWidth/gl.drawingBufferHeight,
-            0.1,
-            1000
+
+    function Box(props) {
+        const mesh = useRef(null)
+        const [hovered, setHover] = useState(false)
+        const [active, setActive] = useState(false)
+        //useFrame((state, delta) => (mesh.current.rotation.x += 0.01))
+        return (
+          <mesh
+            {...props}
+            ref={mesh}
+            scale={active ? 1.5 : 1}
+            onClick={(event) => setActive(!active)}
+            onPointerOver={(event) => setHover(true)}
+            onPointerOut={(event) => setHover(false)}
+            onPointerMove={console.log("bye")}>
+            <boxGeometry args={[1, 1, 1]} />
+            <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
+          </mesh>
         )
-    
-        gl.canvas = { width:gl.drawingBufferWidth, heigth:gl.drawingBufferHeight }
-    
-        // Create a WebGLRenderer
-        const renderer = new Renderer({gl})
-        renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight)
-    
-    
-        let cubes = [[16,8,10,0,0,0], [16,8,10,16,0,0]]
-        
-        for (let i = 0; i < cubes.length; i++) {
-            let color = new THREE.Color(0xffffff);
-            color.setHex(Math.random() * 0xffffff);
-    
-            let geometry = new BoxGeometry(cubes[i][0],cubes[i][1],cubes[i][2])
-            let material = new MeshBasicMaterial({
-                color: color
-            })
-            let cube = new Mesh(geometry, material)
-            cube.position.set(cubes[i][3],cubes[i][4],cubes[i][5])
-    
-            scene.add(cube)
-        }
-        
-        camera.position.z = 50
-
-    
-        const render = ()=> {
-            requestAnimationFrame(render)
-            renderer.render(scene, camera)
-    
-            //controls.update()
-            gl.endFrameEXP()
-        }
-    
-        render()
-    
     }
 
-    return(
-        <View>    
-            <GLView
-                    onContextCreate={onContextCreate}
-                    style = {{width: 500, height: 500}}
-                />
+    const cubes = [];
+    let x = -2;
+    for (let i = 0; i < 5; i++) {
+        cubes.push(<Box position={[x, 0, 0]} key={i}/>)
+        x += 1
+    }
+    return(  
+
+        <View style={{flex: 1}}>
+            <Canvas>
+                <group rotateY={0.8}>
+                    {cubes}
+                </group>
+            </Canvas>
+            <Slider 
+                value={rotation}
+                onValueChange={value => {
+                    setRotation(value)
+                }}
+            />
         </View>
-    )
+
+
+
+    );
 }
 
 export default ResultsScreen
