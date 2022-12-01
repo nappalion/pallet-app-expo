@@ -121,7 +121,7 @@ function calculateConfiguration(l, w, h) {
                 for (let k = 0; k < h; k++) {
                     
                     pallet[z + k][y + i][x + j] = boxesPlaced;
-
+                    
                 }
             }
         }
@@ -133,7 +133,7 @@ function calculateConfiguration(l, w, h) {
     ttt = [];
 
     // Perform the calculation with dynamic orientations (runs once)
-    console.log("Starting dynamic orientation")
+    //console.log("Starting dynamic orientation")
 
     let isMoreSpace = true;
     while (isMoreSpace) {
@@ -153,7 +153,7 @@ function calculateConfiguration(l, w, h) {
         isMoreSpace = moveToNextAvailable();
     }
 
-    console.log(`Boxes Placed: ${boxesPlaced}`)
+    //console.log(`Boxes Placed: ${boxesPlaced}`)
 
     tempBestPallets.push(pallet);
     tempBestPlaced = boxesPlaced;
@@ -161,7 +161,7 @@ function calculateConfiguration(l, w, h) {
 
     // Perform the calculation with static orientations (runs 6 times)
     for (let i = 0; i < orientations.length; i++) {
-        console.log(`Static orientation: ${i}`);
+        //console.log(`Static orientation: ${i}`);
         // Reset all the initial values for each orientation
         boxesPlaced = 0;
         isMoreSpace = true;
@@ -191,13 +191,13 @@ function calculateConfiguration(l, w, h) {
             tempBestPallets.push(pallet);
         }
 
-        console.log(`Boxes Placed: ${boxesPlaced}`) //----------------------
+        //console.log(`Boxes Placed: ${boxesPlaced}`) //----------------------
     }
 
-    console.log(ttt)
+    //console.log(ttt)
     // Try to find leftover places to place more boxes (runs len(tempBestPallets) times)
 
-    console.log("Finding the best of the best!")
+    //console.log("Finding the best of the best!")
     let bestPallet = tempBestPallets[0]; // placeholder
     let bestPlaced = tempBestPlaced;
     for (let i = 0; i < tempBestPallets.length; i++) {
@@ -231,11 +231,31 @@ function calculateConfiguration(l, w, h) {
         }
     }
 
-    console.log(`${bestPlaced} is the best placed!`);
+    //console.log(`${bestPlaced} is the best placed!`);
 
-    printPallet(bestPallet);
+    //printPallet(bestPallet);
 
-    return bestPallet;
+    return [bestPallet, bestPlaced];
+}
+
+function getBestPallet(l, w, h) {
+    // Get the unique orientations using a set
+    let orientations = new Set([[h, w, l], [h, l, w],[l, w, h], [l, h, w], [w, l, h], [w, h, l]].map(JSON.stringify));
+    orientations = Array.from(orientations).map(JSON.parse);
+
+    let bestPallet = 0 // placeholder
+    let bestPlaced = 0 // placeholder
+
+    for (let i = 0; i < orientations.length; i++) {
+        result = calculateConfiguration(orientations[i][0], orientations[i][1], orientations[i][2])
+        console.log(orientations[i])
+        if (bestPlaced < result[1]) {
+            bestPallet = result[0]
+            bestPlaced = result[1]
+        }
+    }
+
+    return [bestPallet, bestPlaced]
 }
 
 console.log("---------------------------------------------")
@@ -248,5 +268,5 @@ h = 10;
 
 console.log(`Test for ${l}, ${w}, ${h}:`);
 //console.log(calculateConfiguration(l, w, h));
-calculateConfiguration(l, w, h);
+console.log(getBestPallet(l, w, h)[1])
 
