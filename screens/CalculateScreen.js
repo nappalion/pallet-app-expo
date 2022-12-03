@@ -20,6 +20,11 @@ const styles = StyleSheet.create({
     calculateButton: {
         width: "100%",
         backgroundColor: COLORS.purple,
+        alignSelf: 'flex-end',
+    },
+    formButton: {
+        width: 100,
+        backgroundColor: COLORS.purple,
         alignSelf: 'center',
     },
     buttonText: {
@@ -83,6 +88,17 @@ const CalculateScreen = ({ navigation }) => {
 
     const [barcodeData, setBarcodeData] = useState("")
 
+    React.useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <Button style={styles.formButton} textStyle={styles.buttonText} onPress={() => {                        
+                    setModalVisible(true);
+                    setScanned(true); 
+                }} text="Open Form"/>
+            )
+        });
+    }, [navigation]);
+
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
         setModalVisible(true)
@@ -134,6 +150,7 @@ const CalculateScreen = ({ navigation }) => {
                                     <TextInput 
                                         value={length}
                                         header="Length"
+                                        keyboardType="numeric"
                                         container={{marginBottom: 10}}
                                         style={styles.textInput}
                                         borderColor={COLORS.dark_gray}
@@ -146,6 +163,7 @@ const CalculateScreen = ({ navigation }) => {
                                     <TextInput 
                                         value={width}
                                         header="Width"
+                                        keyboardType="numeric"
                                         container={{marginBottom: 10}}
                                         style={styles.textInput}
                                         borderColor={COLORS.dark_gray}
@@ -158,6 +176,7 @@ const CalculateScreen = ({ navigation }) => {
                                     <TextInput 
                                         value={height}
                                         header="Height"
+                                        keyboardType="numeric"
                                         container={{marginBottom: 10}}
                                         style={styles.textInput}
                                         borderColor={COLORS.dark_gray}
@@ -186,7 +205,11 @@ const CalculateScreen = ({ navigation }) => {
                                         onPress={() => {
                                             setModalVisible(false);
                                             setScanned(false); 
-                                            navigation.navigate('Results')
+                                            navigation.navigate('Results', {
+                                                l: parseInt(length),
+                                                w: parseInt(width),
+                                                h: parseInt(height)
+                                            })
                                         }} 
                                     /> 
                                 </View>

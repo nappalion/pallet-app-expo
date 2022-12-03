@@ -35,11 +35,16 @@ function calculateConfiguration(l, w, h) {
     let orientations = new Set([[h, w, l], [h, l, w],[l, w, h], [l, h, w], [w, l, h], [w, h, l]].map(JSON.stringify));
     orientations = Array.from(orientations).map(JSON.parse);
 
+    for (let i = 0; i < orientations.length; i++) {
+        orientations[i].push(Math.random() * 0xffffff)
+    }
+
     const palletL = 48;
     const palletW = 40;
     const palletH = 52;
 
     let pallet = zeros([palletH, palletL, palletW]);
+    let uiPallet = []; // Holds data that three.js can use
 
     let x = 0;
     let y = 0;
@@ -113,7 +118,7 @@ function calculateConfiguration(l, w, h) {
         }
     }
 
-    function fillBox(l, w, h) {
+    function fillBox(l, w, h, color) {
         boxesPlaced += 1;
 
         for (let i = 0; i < l; i++) {
@@ -125,9 +130,11 @@ function calculateConfiguration(l, w, h) {
                 }
             }
         }
+        uiPallet.push([l, w, h, x, y, z, color])
     }
 
     let tempBestPallets = [];
+    let tempBestUIPallets = [];
     let tempBestPlaced = 0;
 
     ttt = [];
@@ -142,10 +149,11 @@ function calculateConfiguration(l, w, h) {
             let c1 = orientations[i][0];
             let c2 = orientations[i][1];
             let c3 = orientations[i][2];
+            let color = orientations[i][3];
 
             // Break if we've placed a box because we found an orientation that works
             if (isValid(c1, c2, c3)) {
-                fillBox(c1, c2, c3);
+                fillBox(c1, c2, c3, color);
                 break;
             }
         }
@@ -156,6 +164,7 @@ function calculateConfiguration(l, w, h) {
     //console.log(`Boxes Placed: ${boxesPlaced}`)
 
     tempBestPallets.push(pallet);
+    tempBestUIPallets.push(uiPallet)
     tempBestPlaced = boxesPlaced;
     ttt.push(boxesPlaced);
 
@@ -166,6 +175,7 @@ function calculateConfiguration(l, w, h) {
         boxesPlaced = 0;
         isMoreSpace = true;
         pallet = zeros([palletH, palletL, palletW]);
+        uiPallet = [];
         x = 0;
         y = 0;
         z = 0;
@@ -174,8 +184,9 @@ function calculateConfiguration(l, w, h) {
             let c1 = orientations[i][0];
             let c2 = orientations[i][1];
             let c3 = orientations[i][2];
+            let color = orientations[i][3];
             if (isValid(c1, c2, c3)) {
-                fillBox(c1, c2, c3);
+                fillBox(c1, c2, c3, color);
             }
             isMoreSpace = moveToNextAvailable();
         }
@@ -184,11 +195,14 @@ function calculateConfiguration(l, w, h) {
         // Store a list of the best placed pallets (erase the list if we've found a better pallet)
         if (boxesPlaced > tempBestPlaced) {
             tempBestPallets = [];
+            tempBestUIPallets = [];
             tempBestPlaced = boxesPlaced;
             tempBestPallets.push(pallet);
+            tempBestUIPallets.push(uiPallet);
         } 
         else if (boxesPlaced == tempBestPlaced) {
             tempBestPallets.push(pallet);
+            tempBestUIPallets.push(uiPallet);
         }
 
         //console.log(`Boxes Placed: ${boxesPlaced}`) //----------------------
@@ -199,11 +213,13 @@ function calculateConfiguration(l, w, h) {
 
     //console.log("Finding the best of the best!")
     let bestPallet = tempBestPallets[0]; // placeholder
+    let bestUIPallet = tempBestUIPallets[0];
     let bestPlaced = tempBestPlaced;
     for (let i = 0; i < tempBestPallets.length; i++) {
         boxesPlaced = tempBestPlaced;
         isMoreSpace = true;
         pallet = tempBestPallets[i];
+        uiPallet = tempBestUIPallets[i];
         x = 0;
         y = 0;
         z = 0;
@@ -215,8 +231,9 @@ function calculateConfiguration(l, w, h) {
                 let c1 = orientations[i][0];
                 let c2 = orientations[i][1];
                 let c3 = orientations[i][2];
+                let color = orientations[i][3];
                 if (isValid(c1, c2, c3)) {
-                    fillBox(c1, c2, c3);
+                    fillBox(c1, c2, c3, color);
                     break;
                 }
             }
@@ -228,6 +245,7 @@ function calculateConfiguration(l, w, h) {
         if (boxesPlaced > bestPlaced) {
             bestPlaced = boxesPlaced;
             bestPallet = pallet;
+            bestUIPallet = uiPallet;
         }
     }
 
@@ -235,38 +253,38 @@ function calculateConfiguration(l, w, h) {
 
     //printPallet(bestPallet);
 
-    return [bestPallet, bestPlaced];
+    return [bestUIPallet, bestPlaced];
 }
 
-function getBestPallet(l, w, h) {
+export const getBestPallet = (l, w, h) => {
     // Get the unique orientations using a set
     let orientations = new Set([[h, w, l], [h, l, w],[l, w, h], [l, h, w], [w, l, h], [w, h, l]].map(JSON.stringify));
     orientations = Array.from(orientations).map(JSON.parse);
 
-    let bestPallet = 0 // placeholder
+    let bestUIPallet = 0 // placeholder
     let bestPlaced = 0 // placeholder
 
     for (let i = 0; i < orientations.length; i++) {
         result = calculateConfiguration(orientations[i][0], orientations[i][1], orientations[i][2])
-        console.log(orientations[i])
+        //console.log(orientations[i])
         if (bestPlaced < result[1]) {
-            bestPallet = result[0]
+            bestUIPallet = result[0]
             bestPlaced = result[1]
         }
     }
 
-    return [bestPallet, bestPlaced]
+    return [bestUIPallet, bestPlaced]
 }
 
-console.log("---------------------------------------------")
-console.log("40\"x48\"x52\" Pallet Configuration")
-console.log("---------------------------------------------")
+// console.log("---------------------------------------------")
+// console.log("40\"x48\"x52\" Pallet Configuration")
+// console.log("---------------------------------------------")
 
-l = 18;
-w = 8;
-h = 10;
+// l = 18;
+// w = 8;
+// h = 10;
 
-console.log(`Test for ${l}, ${w}, ${h}:`);
-//console.log(calculateConfiguration(l, w, h));
-console.log(getBestPallet(l, w, h)[1])
+// console.log(`Test for ${l}, ${w}, ${h}:`);
+// //console.log(calculateConfiguration(l, w, h));
+// console.log(getBestPallet(l, w, h)[1])
 
