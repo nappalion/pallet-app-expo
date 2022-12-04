@@ -1,9 +1,10 @@
 import React from 'react';
-import { Button, View } from 'react-native'
+import { View } from "react-native";
 import { Scene, Vector3, MeshBasicMaterial, Mesh, AxesHelper, PerspectiveCamera, BoxGeometry, EdgesGeometry, LineSegments, LineBasicMaterial, Color} from "three"
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { Renderer } from "expo-three"
 import { GLView } from 'expo-gl';
+
 import { getBestPallet } from "../pallet-configuration"
 
 const ResultsScreen = ({ route, navigation }) => {
@@ -142,6 +143,7 @@ const ResultsScreen = ({ route, navigation }) => {
         render()
     }
 
+
     return(
         <View style={{flex: 1, justifyContent: 'center', alignContent: 'center'}}>
             <GLView
@@ -149,7 +151,7 @@ const ResultsScreen = ({ route, navigation }) => {
                 style = {{width: 500, height: 500, alignSelf: 'center'}}
             />
         </View>
-    )
-}
+    );
+};
 
-export default ResultsScreen
+export default ResultsScreen;

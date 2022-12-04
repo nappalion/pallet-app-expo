@@ -1,125 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import BoxImage from "../assets/closed-box.svg";
-import Button from "../components/Button";
+import React from 'react';
+import { Image, StyleSheet, View } from "react-native";
 import { COLORS } from '../colors';
-import auth from '@react-native-firebase/auth';
 
+
+import TextInput from '../components/TextInput';
+import Button from "../components/Button";
+
+const LoginScreen = ({ navigation }) => {
+    return(
+        <View style={styles.container}>
+            <Image style={styles.logo} source={require('../assets/logo.png')}/>
+            <View style={styles.inputContainer}>
+                <TextInput 
+                    style={styles.textInput}
+                    placeholder="Please enter an email..." 
+                    title="Email"
+                />
+                <TextInput 
+                    style={styles.textInput}
+                    placeholder="Please enter a password..." 
+                    title="Password"
+                />
+                <Button
+                    text="LOGIN"
+                    style={styles.button}
+                />
+            </View>
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignContent: 'center'
-    },
-    textInput: {
-        borderRadius: 10,
-        borderWidth: 1,
-        paddingTop: 15,
-        paddingBottom: 15,
+        alignContent: 'center',
         paddingLeft: 20,
-        paddingRight: 20,
-        justifyContent: 'space-between'
+        paddingRight: 20
     },
-    buttonText: {
-        color: 'white',
-    },
-    textStyle: {
-        textAlign: 'center'
-    },
-    button: {
-        width: "50%",
-        backgroundColor: COLORS.dark_gray,
-        alignSelf: 'center'
+    inputContainer: {
+        flex: 0.7,
     },
     logo: {
-        width: "30%",
-        height: "10%",
+        width: "65%",
+        height: "20%",
         resizeMode: 'contain',
         alignSelf: 'center'
     },
+    button: {
+        marginTop: 20
+    }
 });
 
-
-const LoginScreen = ({ navigation }) => {
-
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
-    // Set an initializing state whilst Firebase connects
-    const [initializing, setInitializing] = useState(true);
-    const [user, setUser] = useState();
-
-    // Handle user state changes
-    function onAuthStateChanged(user) {
-    setUser(user);
-    if (initializing) setInitializing(false);
-    }
-
-    useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
-    }, []);
-
-    if (initializing) return null;
-
-    function loginWithEmailPassword(email, password) {
-        auth()
-        .signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            console.log('Sign in sucessful!');
-            setUser(userCredential.user);
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    }
-
-    if (user) {
-        navigation.navigate('Landing');
-    }
-
-    return(
-        <SafeAreaView style={styles.container}>
-            <Image 
-                style={styles.logo} 
-                source={require('../assets/logo.png')}/>
-            <TextInput 
-                value={barcodeData}
-                header="Username."
-                container={{marginBottom: 10}}
-                style={styles.textInput}
-                borderColor={COLORS.dark_gray}
-                onChangeText={(text) => {
-                        setEmail(text)
-                    }
-                }
-                placeholder="Enter a barcode number"
-            />
-            <TextInput 
-                value={length}
-                header="Password"
-                container={{marginBottom: 10}}
-                style={styles.textInput}
-                password
-                borderColor={COLORS.dark_gray}
-                onChangeText={(text) => {
-                        setPassword(text)
-                    }
-                }
-                placeholder="Enter a length"
-            />
-            <Button 
-                style={styles.button}
-                textStyle={styles.buttonText}
-                text={'Tap to Scan Again'}
-                onPress={() => {
-                    loginWithEmailPassword(email, password)
-                }} 
-            /> 
-        </SafeAreaView>
-    );
-};
-
-export default LoginScreen
+export default LoginScreen;
