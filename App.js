@@ -6,13 +6,18 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LandingScreen from './screens/LandingScreen'
 import CalculateScreen from './screens/CalculateScreen'
 import ResultsScreen from './screens/ResultsScreen'
+import LoginScreen from './screens/LoginScreen'
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Calculate'>
+      <Stack.Navigator initialRouteName='Login'>
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+        />
         <Stack.Screen
           name="Landing"
           component={LandingScreen}

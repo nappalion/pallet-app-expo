@@ -13,7 +13,7 @@ const ResultsScreen = ({ route, navigation }) => {
         // THREE.js code
         const scene = new Scene()
         const camera = new PerspectiveCamera(
-            75,
+            65,
             gl.drawingBufferWidth/gl.drawingBufferHeight,
             0.1,
             1000
@@ -29,6 +29,7 @@ const ResultsScreen = ({ route, navigation }) => {
         let axes = new AxesHelper(100);
         axes.position.x = -35;
         axes.position.y = -25;
+        scene.add(axes)
 
         // Create a WebGLRenderer/Canvas
         gl.canvas = { width:gl.drawingBufferWidth, heigth:gl.drawingBufferHeight }
@@ -142,10 +143,10 @@ const ResultsScreen = ({ route, navigation }) => {
     }
 
     return(
-        <View style={{flex: 1}}>    
+        <View style={{flex: 1, justifyContent: 'center', alignContent: 'center'}}>
             <GLView
                 onContextCreate={onContextCreate}
-                style = {{flex: 1}}
+                style = {{width: 500, height: 500, alignSelf: 'center'}}
             />
         </View>
     )
