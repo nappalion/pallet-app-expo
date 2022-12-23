@@ -1,8 +1,21 @@
 import React from 'react';
 import { Image, View, StyleSheet, Text} from "react-native";
 import { COLORS } from '../colors';
+import { auth, database } from "../firebaseConfig.js"
+import { ref, child, get } from "firebase/database";
 
 import Button from '../components/Button';
+
+const dbRef = ref(database);
+get(child(dbRef, `admin`)).then((snapshot) => {
+  if (snapshot.exists()) {
+    console.log("User is an admin.");
+  } else {
+    console.log("User is not an admin.");
+  }
+}).catch((error) => {
+  console.error(error);
+});
 
 const LandingScreen = ({ navigation }) => {
 
@@ -20,7 +33,7 @@ const LandingScreen = ({ navigation }) => {
                 <Button
                     text="SCAN BOX"
                     style={ styles.button }
-                    onPress={ navigation.navigate("Barcode") }
+                    onPress={ () => { navigation.navigate("Barcode") }}
                 />
 
                 {

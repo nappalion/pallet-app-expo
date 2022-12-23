@@ -1,12 +1,10 @@
 import React from 'react';
 import { TextInput as RNTextInput, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import Eye from "../assets/eye-line.svg"
-import EyeOff from "../assets/eye-off-line.svg"
 
 import { COLORS } from '../colors';
 
 function TextInput(props) {
-    const [hidePassword, setHidePassword] = React.useState(props.password)
+    const [hidePassword, setHidePassword] = React.useState(props.isPassword)
 
     return(
         <View style={ [styles.container, props.style] }>
@@ -24,11 +22,11 @@ function TextInput(props) {
                     secureTextEntry={hidePassword}
                     ref={props.ref}/>
 
-                {props.password && 
+                {props.isPassword && 
                     <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
                         {hidePassword 
-                            ? <Eye width="100%" height="100%"/>
-                            : <EyeOff width="100%" height="100%"/>
+                            ? console.log("Eye on")
+                            : console.log("Eye off")
                         }
                     </TouchableOpacity>
                 }
