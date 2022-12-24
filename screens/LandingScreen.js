@@ -6,20 +6,25 @@ import { ref, child, get } from "firebase/database";
 
 import Button from '../components/Button';
 
-const dbRef = ref(database);
-get(child(dbRef, `admin`)).then((snapshot) => {
-  if (snapshot.exists()) {
-    console.log("User is an admin.");
-  } else {
-    console.log("User is not an admin.");
-  }
-}).catch((error) => {
-  console.error(error);
-});
+
+function userIsAdmin() {
+    get(child(database `admin`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log("User is an admin.");
+          return true;
+        } else {
+          console.log("User is not an admin.");
+          return false;
+        }
+      }).catch((error) => {
+        console.error(error);
+        return false;
+      });
+}
+
 
 const LandingScreen = ({ navigation }) => {
 
-    const isAdmin = false;
     return(
         <View style={ styles.container }>
             <Image
@@ -37,7 +42,7 @@ const LandingScreen = ({ navigation }) => {
                 />
 
                 {
-                    isAdmin &&
+                    userIsAdmin &&
                     <View> 
                         <Text style={ styles.textSpacer }>OR</Text>
                         <Button
@@ -45,7 +50,7 @@ const LandingScreen = ({ navigation }) => {
                             style={styles.button}
                         />
                         <Button
-                            text="LOGIN"
+                            text="LOGOUT"
                             secondary
                             style={ styles.button }
                         />

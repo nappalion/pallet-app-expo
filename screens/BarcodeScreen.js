@@ -24,7 +24,6 @@ const BarcodeScreen = ({ navigation }) => {
                 <Button onPress={() => {                        
                     setScanned(true); 
                     navigation.navigate("Calculate")
-                    console.log("hello")
                 }} text="Open Form"/>
             )
         });
@@ -33,7 +32,7 @@ const BarcodeScreen = ({ navigation }) => {
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
         navigation.navigate('Calculate', {
-            barcode: parseInt(data)
+            barcode: data
         })
     };
 

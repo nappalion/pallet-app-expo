@@ -28,6 +28,7 @@ function printPallet(pallet) {
     }
 }
 
+
 function calculateConfiguration(l, w, h) {
     let boxesPlaced = 0;
     
