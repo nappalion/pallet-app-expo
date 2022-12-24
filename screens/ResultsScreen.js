@@ -99,7 +99,7 @@ const ResultsScreen = ({ route, navigation }) => {
             
                     // Add to dictionary if color isn't already there
                     if (!(cubes[i][6] in sections)) {
-                    sections[cubeColorKey] = [[], 0, 0, 0, []];
+                        sections[cubeColorKey] = [[], 0, 0, 0, []];
                     }
             
                     let l = cubes[i][0];
@@ -159,6 +159,7 @@ const ResultsScreen = ({ route, navigation }) => {
                     // Add Offset
                     // Create a dictionary of each color: array(with each being a BoxBufferGeometry) and the largest x, y, and z for that section
                     // If the x, y, or z is greater than the core's values, then increase the x, y, or z of the section
+                    // Section data: [boxes, max-x, max-y, max-z, edges]
     
                     let xOffset = 18;
                     let zOffset = 17;
@@ -177,9 +178,9 @@ const ResultsScreen = ({ route, navigation }) => {
     
                     scene.add(cube);
                     scene.add(line);
-    
-                    writePalletData(l, w, h, scene); 
                 }
+
+                writePalletData(l, w, h, scene); 
             }
         
             const render = ()=> {
