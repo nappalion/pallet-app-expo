@@ -175,9 +175,13 @@ const ResultsScreen = ({ route, navigation }) => {
                         cube.position.z += zOffset;
                         line.position.z += zOffset;
                     }
+
+                    console.log("Before adding: " + JSON.stringify(scene))
     
                     scene.add(cube);
                     scene.add(line);
+
+                    console.log("After adding: " + JSON.stringify(scene))
                 }
 
                 writePalletData(l, w, h, scene); 
