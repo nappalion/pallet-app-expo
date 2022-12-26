@@ -7,7 +7,7 @@ import TextInput from '../components/TextInput';
 import Button from "../components/Button";
 
 const CalculateScreen = ({ route, navigation }) => {
-    const [ barcode, setBarcode ] = useState(route.params)
+    const [ barcode, setBarcode ] = useState((route.params) ? route.params.barcode : "" )
     const [ length, setLength ] = useState("")
     const [ width, setWidth ] = useState("")
     const [ height, setHeight ] = useState("")
@@ -59,11 +59,13 @@ const CalculateScreen = ({ route, navigation }) => {
                     text="CALCULATE" 
                     style={ styles.button }
                     onPress={ () => {
-                            navigation.navigate('Results', {
-                                l: parseInt(length),
-                                w: parseInt(width),
-                                h: parseInt(height)
-                            })
+                            if (length && width && height) {
+                                navigation.navigate('Results', {
+                                    l: parseInt(length),
+                                    w: parseInt(width),
+                                    h: parseInt(height)
+                                })
+                            }
                         }
                     }
                  />
