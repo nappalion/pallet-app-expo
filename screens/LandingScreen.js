@@ -1,29 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, View, StyleSheet, Text} from "react-native";
 import { COLORS } from '../colors';
-import { auth, database } from "../firebaseConfig.js"
+import { database } from "../firebaseConfig.js"
 import { ref, child, get } from "firebase/database";
 
 import Button from '../components/Button';
 
 
-function userIsAdmin() {
-    get(child(database `admin`)).then((snapshot) => {
+const LandingScreen = ({ route, navigation }) => {
+
+    const [ empId, setEmpId ] = useState((route.params) ? route.params.empId : "" );
+    const [ isAdmin, setIsAdmin ] = useState(false);
+    
+    get(child(ref(database), `admin/${empId}`)).then((snapshot) => {
         if (snapshot.exists()) {
-          console.log("User is an admin.");
-          return true;
+            console.log("User is an admin.");
+            setIsAdmin(true)
         } else {
-          console.log("User is not an admin.");
-          return false;
+            console.log("User is not an admin.");
+            setIsAdmin(false)
         }
-      }).catch((error) => {
+        }).catch((error) => {
         console.error(error);
-        return false;
-      });
-}
-
-
-const LandingScreen = ({ navigation }) => {
+        setIsAdmin(false)
+    });
 
     return(
         <View style={ styles.container }>
@@ -42,20 +42,26 @@ const LandingScreen = ({ navigation }) => {
                 />
 
                 {
-                    userIsAdmin &&
+                    isAdmin &&
                     <View> 
-                        <Text style={ styles.textSpacer }>OR</Text>
                         <Button
                             text="MANAGE USER ACCOUNTS"
                             style={styles.button}
                         />
+
                         <Button
-                            text="LOGOUT"
-                            secondary
-                            style={ styles.button }
+                            text="MANAGE PALLETS"
+                            style={styles.button}
                         />
                     </View>
+                    
                 }
+
+                <Button
+                    text="LOGOUT"
+                    secondary
+                    style={ styles.button }
+                />
             </View>
         </View>
     );
@@ -67,7 +73,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignContent: 'center',
         paddingLeft: 20,
-        paddingRight: 20
+        paddingRight: 20,
+        paddingTop: 10,
+        paddingBottom: 10
     },
     inputContainer: {
         flex: 2,
@@ -78,21 +86,16 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     logo: {
-        flex: 1,
         width: "30%",
         height: "10%",
         resizeMode: 'contain',
         alignSelf: 'center'
     },
     box: {
-        flex: 2,
+        flex: 1.5,
         resizeMode: 'contain',
         alignSelf: 'center'
     },
-    textSpacer: {
-        color: COLORS.light_purple,
-        textAlign: "center"
-    }
 });
 
 export default LandingScreen;

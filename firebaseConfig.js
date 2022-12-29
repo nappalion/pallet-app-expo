@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 import { 
     FIREBASE_API_KEY,
@@ -38,9 +37,6 @@ if (getApps().length === 0) {
 } else {
     app = getApp()
 }
-
-// Initialize Firebase Authentication and get a reference to the service
-export const auth = getAuth(app);
 
 // Initialize Realtime Database and get a reference to the service
 export const database = getDatabase(app);

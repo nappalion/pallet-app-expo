@@ -1,40 +1,40 @@
 import React, { useState } from 'react';
 import { Image, StyleSheet, View } from "react-native";
 import { COLORS } from '../colors';
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig.js"
+import { database } from "../firebaseConfig.js"
+import { ref, child, get } from "firebase/database";
 
 import TextInput from '../components/TextInput';
 import Button from "../components/Button";
 
-
+function userExists(empId) {
+    return get(child(ref(database), `users/${empId}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log("User exists.");
+          return true;
+        } else {
+          console.log("User does not exist.");
+          return false;
+        }
+    }).catch((error) => {
+        console.error(error);
+        return false;
+    });
+}
 
 const LoginScreen = ({ navigation }) => {
-    const [ email, setEmail ] = useState("")
-    const [ password, setPassword ] = useState("")
+    const [ empId, setEmpId ] = useState("")
 
     return(
         <View style={styles.container}>
             <Image style={styles.logo} source={require('../assets/logo.png')}/>
             <View style={styles.inputContainer}>
                 <TextInput 
-                    style={styles.textInput}
                     placeholder="Please enter an email..." 
-                    title="Email"  
-                    value={email}
+                    title="Employee ID"  
+                    value={empId}
                     onChangeText={(text) => {
-                            setEmail(text)
-                        }
-                    }
-                />
-                <TextInput 
-                    isPassword={true}
-                    style={styles.textInput}
-                    placeholder="Please enter a password..." 
-                    title="Password"
-                    value={password}
-                    onChangeText={(text) => {
-                            setPassword(text)
+                            setEmpId(text)
                         }
                     }
                 />
@@ -42,19 +42,15 @@ const LoginScreen = ({ navigation }) => {
                     text="LOGIN"
                     style={styles.button}
                     onPress={ () => {
-                            signInWithEmailAndPassword(auth, email, password)
-                            .then((userCredential) => {
-                                // Signed in 
-                                const user = userCredential.user;
-                                console.log("Sucessfully signed in!")
-                                navigation.navigate("Landing")
-                                // ...
+                            userExists(empId).then(function(result) {
+                                if (result) {
+                                    navigation.navigate('Landing', {
+                                        empId: empId
+                                    })
+                                } else {
+                                    console.log("User not found")
+                                }
                             })
-                            .catch((error) => {
-                                const errorCode = error.code;
-                                const errorMessage = error.message;
-                                console.log(`Error code: ${errorCode}; Error message: ${errorMessage}`)
-                            });
                         }
                     }
                 />
@@ -81,7 +77,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     button: {
-        marginTop: 20
+        marginTop: 10
     }
 });
 
