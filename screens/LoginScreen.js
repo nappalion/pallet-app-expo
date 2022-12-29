@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Image, StyleSheet, View } from "react-native";
 import { COLORS } from '../colors';
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig.js"
 
 import TextInput from '../components/TextInput';
@@ -19,8 +18,8 @@ const LoginScreen = ({ navigation }) => {
             <View style={styles.inputContainer}>
                 <TextInput 
                     style={styles.textInput}
-                    placeholder="Please enter an email..." 
-                    title="Email"  
+                    placeholder="Scan your ID." 
+                    title="Employee ID"  
                     value={email}
                     onChangeText={(text) => {
                             setEmail(text)
@@ -41,21 +40,8 @@ const LoginScreen = ({ navigation }) => {
                 <Button
                     text="LOGIN"
                     style={styles.button}
-                    onPress={ () => {
-                            signInWithEmailAndPassword(auth, email, password)
-                            .then((userCredential) => {
-                                // Signed in 
-                                const user = userCredential.user;
-                                console.log("Sucessfully signed in!")
-                                navigation.navigate("Landing")
-                                // ...
-                            })
-                            .catch((error) => {
-                                const errorCode = error.code;
-                                const errorMessage = error.message;
-                                console.log(`Error code: ${errorCode}; Error message: ${errorMessage}`)
-                            });
-                        }
+                    onPress={ 
+                        navigation.navigate("Landing")
                     }
                 />
             </View>
