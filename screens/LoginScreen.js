@@ -21,6 +21,22 @@ function userExists(empId) {
         return false;
     });
 }
+function isAdmin(empId) {
+    return get(child(ref(database), `admin/${empId}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            console.log("User is an admin.");
+            return true
+        } else {
+            console.log("User is not an admin.");
+            return false
+        }
+        }).catch((error) => {
+        console.error(error);
+        return false
+    });
+}
+
+
 
 const LoginScreen = ({ navigation }) => {
     const [ empId, setEmpId ] = useState("")
@@ -42,15 +58,19 @@ const LoginScreen = ({ navigation }) => {
                     text="LOGIN"
                     style={styles.button}
                     onPress={ () => {
-                            userExists(empId).then(function(result) {
-                                if (result) {
-                                    navigation.navigate('Landing', {
-                                        empId: empId
-                                    })
-                                } else {
-                                    console.log("User not found")
-                                }
-                            })
+                            userExists(empId).then( (userExists) => {
+                                isAdmin(empId).then( (isAdmin) => {
+                                        if (userExists) {
+                                            navigation.navigate('Landing', {
+                                                empId: empId,
+                                                isAdmin: isAdmin
+                                            })
+                                        } else {
+                                            console.log("User not found")
+                                        }
+                                    }
+                                )
+                            });
                         }
                     }
                 />

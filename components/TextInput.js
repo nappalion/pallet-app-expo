@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput as RNTextInput, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import { TextInput as RNTextInput, StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 
 import { COLORS } from '../colors';
 
@@ -8,10 +8,15 @@ function TextInput(props) {
 
     return(
         <View style={ [styles.container, props.style] }>
-            <Text style={styles.header}>{props.title}</Text>
+            { props.title && <Text style={styles.header}>{props.title}</Text>}
             <View 
                 style={styles.textField}
                 borderColor = {props.error ? "#f54242" : COLORS.gray}>
+
+                { props.leadingIcon &&
+                <Image source={require('../assets/logo.png')}/>
+                }
+
                 <RNTextInput 
                     value={props.value}
                     style={styles.input}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, View, StyleSheet, Text} from "react-native";
 import { COLORS } from '../colors';
 import { database } from "../firebaseConfig.js"
@@ -9,21 +9,8 @@ import Button from '../components/Button';
 
 const LandingScreen = ({ route, navigation }) => {
 
-    const [ empId, setEmpId ] = useState((route.params) ? route.params.empId : "" );
-    const [ isAdmin, setIsAdmin ] = useState(false);
-    
-    get(child(ref(database), `admin/${empId}`)).then((snapshot) => {
-        if (snapshot.exists()) {
-            console.log("User is an admin.");
-            setIsAdmin(true)
-        } else {
-            console.log("User is not an admin.");
-            setIsAdmin(false)
-        }
-        }).catch((error) => {
-        console.error(error);
-        setIsAdmin(false)
-    });
+    const [ empId, setEmpId ] = useState((route.params.empId) ? route.params.empId : "" );
+    const [ isAdmin, setIsAdmin ] = useState((route.params.isAdmin) ? route.params.isAdmin : "");
 
     return(
         <View style={ styles.container }>
@@ -47,11 +34,21 @@ const LandingScreen = ({ route, navigation }) => {
                         <Button
                             text="MANAGE USER ACCOUNTS"
                             style={styles.button}
+                            onPress={ () =>
+                                navigation.navigate('ManagePallet', {
+                                    empId: empId
+                                }) 
+                            }
                         />
 
                         <Button
                             text="MANAGE PALLETS"
                             style={styles.button}
+                            onPress={ () =>
+                                navigation.navigate('ManagePallet', {
+                                    empId: empId
+                                }) 
+                            }
                         />
                     </View>
                     

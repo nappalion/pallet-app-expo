@@ -9,6 +9,10 @@ import CalculateScreen from './screens/CalculateScreen'
 import ResultsScreen from './screens/ResultsScreen'
 import LoginScreen from './screens/LoginScreen'
 import BarcodeScreen from './screens/BarcodeScreen'
+import ManagePalletScreen from './screens/admin/ManagePalletScreen';
+// import ManageUsersScreen from './screens/admin/ManageUsersScreen';
+// import EditPalletScreen from './screens/admin/EditPallet';
+// import EditUserScreen from './screens/admin/EditUser';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +46,22 @@ const App = () => {
           name="Results"
           component={ResultsScreen}
         />
+        <Stack.Screen
+          name="ManagePallet"
+          component={ManagePalletScreen}
+        />
+        {/* <Stack.Screen
+          name="ManageUsers"
+          component={ManageUsersScreen}
+        />
+        <Stack.Screen
+          name="EditPallet"
+          component={EditPalletScreen}
+        />
+        <Stack.Screen
+          name="EditUser"
+          component={EditUserScreen}
+        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );
