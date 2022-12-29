@@ -8,6 +8,7 @@ import TextInput from '../components/TextInput';
 import Button from "../components/Button";
 
 function userExists(empId) {
+    console.log("Checking if " + empId.toString() + " exists.")
     return get(child(ref(database), `users/${empId}`)).then((snapshot) => {
         if (snapshot.exists()) {
           console.log("User exists.");
@@ -58,19 +59,23 @@ const LoginScreen = ({ navigation }) => {
                     text="LOGIN"
                     style={styles.button}
                     onPress={ () => {
-                            userExists(empId).then( (userExists) => {
-                                isAdmin(empId).then( (isAdmin) => {
-                                        if (userExists) {
-                                            navigation.navigate('Landing', {
-                                                empId: empId,
-                                                isAdmin: isAdmin
-                                            })
-                                        } else {
-                                            console.log("User not found")
+                            if (empId != "") {
+                                userExists(empId).then( (userExists) => {
+                                    isAdmin(empId).then( (isAdmin) => {
+                                            if (userExists) {
+                                                navigation.navigate('Landing', {
+                                                    currUser: { empId: empId, isAdmin: isAdmin }
+                                                })
+                                            } else {
+                                                console.log("User not found.")
+                                            }
                                         }
-                                    }
-                                )
-                            });
+                                    )
+                                });
+                            }
+                            else {
+                                console.log("Employee ID cannot be empty!")
+                            }
                         }
                     }
                 />

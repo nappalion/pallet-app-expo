@@ -9,8 +9,7 @@ import Button from '../components/Button';
 
 const LandingScreen = ({ route, navigation }) => {
 
-    const [ empId, setEmpId ] = useState((route.params.empId) ? route.params.empId : "" );
-    const [ isAdmin, setIsAdmin ] = useState((route.params.isAdmin) ? route.params.isAdmin : "");
+    const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
 
     return(
         <View style={ styles.container }>
@@ -25,18 +24,20 @@ const LandingScreen = ({ route, navigation }) => {
                 <Button
                     text="SCAN BOX"
                     style={ styles.button }
-                    onPress={ () => { navigation.navigate("Barcode") }}
+                    onPress={ () => { navigation.navigate("Barcode", {
+                        currUser: currUser
+                    }) }}
                 />
 
                 {
-                    isAdmin &&
+                    currUser.isAdmin &&
                     <View> 
                         <Button
                             text="MANAGE USER ACCOUNTS"
                             style={styles.button}
                             onPress={ () =>
-                                navigation.navigate('ManagePallet', {
-                                    empId: empId
+                                navigation.navigate('ManageUsers', {
+                                    currUser: currUser
                                 }) 
                             }
                         />
@@ -46,7 +47,7 @@ const LandingScreen = ({ route, navigation }) => {
                             style={styles.button}
                             onPress={ () =>
                                 navigation.navigate('ManagePallet', {
-                                    empId: empId
+                                    currUser: currUser
                                 }) 
                             }
                         />

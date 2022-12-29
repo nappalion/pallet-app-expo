@@ -10,9 +10,20 @@ function SubHeader(props) {
             marginBottom: 10,
             backgroundColor: COLORS.gray,
             flexDirection: "row",
+            justifyContent: "space-between",
+        },
+        subContainer: {
+            flexDirection: "row",
         },
         title: {
             fontSize: 15,
+            color: COLORS.dark_gray,
+            alignSelf: "center",
+        },
+        secondTitle: {
+            fontSize: 15,
+            color: COLORS.dark_gray,
+            alignSelf: "center"
         },
         details: {
             fontSize: 15,
@@ -22,8 +33,14 @@ function SubHeader(props) {
 
     return(
         <View style={styles.container}>
-            <Text style={styles.title}>{props.title}</Text>
-            <Text style={styles.details}>{props.details}</Text>
+            <View style={styles.subContainer}>
+                <Text style={styles.title}>{props.title}</Text>
+                <Text style={styles.details}>{props.details}</Text>
+            </View>
+            { 
+                props.secondTitle && <Text style={styles.secondTitle}>{props.secondTitle}</Text> 
+            }
+            
         </View>
     );
 }

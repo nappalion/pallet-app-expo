@@ -9,12 +9,13 @@ function TextInput(props) {
     return(
         <View style={ [styles.container, props.style] }>
             { props.title && <Text style={styles.header}>{props.title}</Text>}
+            
             <View 
-                style={styles.textField}
+                style={[styles.textField, {backgroundColor: (props.notEditable) ? COLORS.gray : null }]}
                 borderColor = {props.error ? "#f54242" : COLORS.gray}>
 
-                { props.leadingIcon &&
-                <Image source={require('../assets/logo.png')}/>
+                { props.search &&
+                    <Image style={styles.search} source={require('../assets/search-icon.png')}/>
                 }
 
                 <RNTextInput 
@@ -23,6 +24,7 @@ function TextInput(props) {
                     onChangeText={props.onChangeText}
                     onSubmitEditing={props.onSubmitEditing}
                     placeholder = {props.placeholder}
+                    editable = { !props.notEditable }
                     placeholderTextColor = { COLORS.light_purple }
                     secureTextEntry={hidePassword}
                     ref={props.ref}/>
@@ -50,10 +52,11 @@ function TextInput(props) {
 
 const styles = StyleSheet.create({
     container: {
-        height: 100,
+        height: "auto",
         width: "100%",
         borderRadius: 10,
         alignItems: 'flex-start',
+        marginTop: 10
     },
     error: {
         color: COLORS.red, 
@@ -71,7 +74,7 @@ const styles = StyleSheet.create({
         height: "100%",
         paddingTop: 15,
         paddingBottom: 15,
-        paddingLeft: 20,
+        paddingLeft: 10,
         paddingRight: 20,
         color: COLORS.dark_purple,
         fontSize: 17
@@ -81,6 +84,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         paddingLeft: 10,
         paddingBottom: 5
+    },
+    search: {
+        alignSelf: 'center',
+        marginLeft: 10,
     }
 });
 

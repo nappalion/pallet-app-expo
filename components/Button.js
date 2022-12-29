@@ -23,6 +23,7 @@ function Button(props) {
     return(
         <TouchableHighlight 
             {...props}
+            underlayColor={COLORS.dark_purple}
             style={[styles.container, props.style]}
         >
             <View>
