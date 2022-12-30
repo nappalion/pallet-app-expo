@@ -3,7 +3,6 @@ import { StyleSheet, View, Text, FlatList } from "react-native";
 import Button from '../../components/Button';
 import SubHeader from '../../components/SubHeader';
 import TextInput from '../../components/TextInput';
-import { empId } from '../../global';
 
 import { database } from "../../firebaseConfig.js"
 import { ref, child, onValue } from "firebase/database";

@@ -70,6 +70,9 @@ const EditCreateUserScreen = ({ route, navigation }) => {
                             }
                             else if (fullName && empId) { 
                                 writeUserData(empId, fullName) 
+                                if (isNew) {
+                                    navigation.goBack();
+                                }
                             } 
                         })
                     }}
@@ -105,8 +108,8 @@ const styles = StyleSheet.create({
         paddingBottom: 10
     },
     button: {
-        marginTop: 30,
-        marginBottom: 20
+        marginTop: 20,
+        marginBottom: 10
     }
 });
 

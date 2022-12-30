@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { View, StyleSheet } from "react-native";
 import { Scene, Vector3, MeshBasicMaterial, Mesh, AxesHelper, PerspectiveCamera, BoxGeometry, EdgesGeometry, LineSegments, LineBasicMaterial, Color} from "three"
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js'
@@ -16,36 +16,47 @@ import { ref, child, get, set } from "firebase/database";
 import { scaleLongestSideToSize } from 'expo-three/build/utils';
 
 
-function palletExists(l, w, h) {
-    return get(ref(database, `pallet-data/${l.toString()}x${w.toString()}x${h.toString()}`)).then((snapshot) => {
-        if (snapshot.exists()) {
-          console.log("Pallet exists.");
-          return JSON.parse(snapshot.val());
-        } else {
-          console.log("Pallet does not exist.");
-          return null;
-        }
-      }).catch((error) => {
-        console.error(error);
-        return null;
-      });
-}
-
-function writePalletData(l, w, h, scene) {
-    set(ref(database, `pallet-data/${l.toString()}x${w.toString()}x${h.toString()}`), JSON.stringify(scene))
-    .then(() => {
-        console.log("Pallet added!")
-    })
-    .catch((error) => {
-        console.log("Failed to add pallet!")
-    });
-}
-
 const ResultsScreen = ({ route, navigation }) => {
-    const {l, w, h} = route.params;
-    const [numPlaced, setNumPlaced] = React.useState("")
+    const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
+    const [ l, setLength ] = useState((route.params.dimensions) ? route.params.dimensions.length.toString() : "" )
+    const [ w, setWidth ] = useState((route.params.dimensions) ? route.params.dimensions.width.toString() : "" )
+    const [ h, setHeight ] = useState((route.params.dimensions) ? route.params.dimensions.height.toString() : "" )
+    const [numPlaced, setNumPlaced] = useState("")
 
+    function palletExists(l, w, h) {
+        // Get the unique orientations using a set
+        let orientations = new Set([[h, w, l], [h, l, w],[l, w, h], [l, h, w], [w, l, h], [w, h, l]].map(JSON.stringify));
+        orientations = Array.from(orientations).map(JSON.parse);
 
+        return get(ref(database, `pallet-data/`)).then((snapshot) => {
+            const result = snapshot.val();
+            for (const pallet in result) {
+                for (let j = 0; j < orientations.length; j++) {
+                    if (pallet == `${orientations[j][0].toString()}x${orientations[j][1].toString()}x${orientations[j][2].toString()}`) {
+                        console.log("Pallet exists.");
+                        return result[pallet];
+                    }
+                }
+            }   
+
+            console.log("Pallet does not exist.");
+            return null;
+
+          }).catch((error) => {
+            console.error(error);
+            return null;
+          });
+    }
+    
+    function writePalletData(l, w, h, scene, numPlaced) {
+        set(ref(database, `pallet-data/${l.toString()}x${w.toString()}x${h.toString()}/`), { scene: JSON.stringify(scene), numPlaced:numPlaced })
+        .then(() => {
+            console.log("Pallet added!")
+        })
+        .catch((error) => {
+            console.log("Failed to add pallet!")
+        });
+    }
 
     const onContextCreate = async (gl) => {
         
@@ -70,13 +81,10 @@ const ResultsScreen = ({ route, navigation }) => {
 
         let scene = null;
 
-        palletExists(l, w, h).then(function(savedScene) {
+        palletExists(l, w, h).then(function(result) {
 
-            if (savedScene != null) {
-                scene = new THREE.ObjectLoader().parse(savedScene)
-            }
-
-            else {
+            function calculatePallet(l, w, h) {
+                    
                 // THREE.js code
                 scene = new Scene();
     
@@ -89,7 +97,7 @@ const ResultsScreen = ({ route, navigation }) => {
                 let results = getBestPallet(l, w, h)
                 let cubes = results[0]
     
-                setNumPlaced(results[1].toString())
+                let numPlaced = results[1].toString()
     
                 let coreColor = cubes[0][6].toString();
                 let sections = {};
@@ -175,18 +183,34 @@ const ResultsScreen = ({ route, navigation }) => {
                         cube.position.z += zOffset;
                         line.position.z += zOffset;
                     }
-
-                    console.log("Before adding: " + JSON.stringify(scene))
     
                     scene.add(cube);
                     scene.add(line);
-
-                    console.log("After adding: " + JSON.stringify(scene))
                 }
 
-                writePalletData(l, w, h, scene); 
+                return {
+                    scene: scene,
+                    numPlaced: numPlaced
+                }
             }
-        
+
+            function calculatePromise() {
+                return new Promise(function(resolve, reject) {
+                    resolve(calculatePallet(l, w, h));
+                })
+            }
+
+            if (result != null) {
+                scene = new THREE.ObjectLoader().parse(JSON.parse(result.scene))
+                setNumPlaced(result.numPlaced)
+            }
+            else {
+                calculatePromise().then((result) => {
+                    writePalletData(l, w, h, result.scene, result.numPlaced);
+                    setNumPlaced(result.numPlaced)
+                });
+            }
+
             const render = ()=> {
                 requestAnimationFrame(render)
                 renderer.render(scene, camera)
@@ -195,7 +219,7 @@ const ResultsScreen = ({ route, navigation }) => {
             }
         
             render()
-        })
+        });
     }
 
 

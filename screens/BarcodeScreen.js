@@ -5,9 +5,28 @@ import { COLORS } from '../colors';
 
 import Button from "../components/Button";
 
-const BarcodeScreen = ({ navigation }) => {
+import { database } from "../firebaseConfig.js"
+import { ref, child, set, get, remove } from "firebase/database";
+
+const BarcodeScreen = ({ route, navigation }) => {
+    const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
+
+    function palletExists(barcode) {
+        return get(child(ref(database), `barcodes/${barcode}`)).then((snapshot) => {
+            if (snapshot.exists()) {
+              console.log("Item exists.");
+              return snapshot.val();
+            } else {
+              console.log("Item does not exist.");
+              return false;
+            }
+        }).catch((error) => {
+            console.error(error);
+            return false;
+        });
+    }
 
     useEffect(() => {
         const getBarCodeScannerPermissions = async () => {
@@ -31,16 +50,60 @@ const BarcodeScreen = ({ navigation }) => {
 
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
-        navigation.navigate('Calculate', {
-            barcode: data
-        })
+        if ( currUser.isAdmin ) {
+            palletExists(data).then((result) => {
+                if (result) {
+                    navigation.navigate('EditCreatePallet', {
+                        currUser: currUser,
+                        barcode: data,
+                        itemName: result.name,
+                        dimensions: { 
+                            length: result.length,
+                            width: result.width,
+                            height: result.height
+                        }
+                    })
+                }
+                else {
+                    console.log("Barcode doesn't exist.")
+                    navigation.navigate('EditCreatePallet', {
+                        barcode: data,
+                        currUser: currUser,
+                        isNew: true
+                    })
+                }
+            });
+        }
+        else {
+            palletExists(data).then((result) => {
+                if (result) {
+                    console.log(result)
+                    navigation.navigate('Calculate', {
+                        barcode: data,
+                        currUser: currUser,
+                    })
+                }
+                else {
+                    console.log("Barcode doesn't exist.")
+                }
+            });
+        }
+
     };
 
     if (hasPermission === null) {
-        return <Text>Requesting for camera permission</Text>;
+        return(
+          <View style={styles.container}>
+            <Text>Requesting for camera permission</Text>
+          </View>  
+        );
     }
     if (hasPermission === false) {
-        return <Text>No access to camera</Text>
+        return(
+            <View style={styles.container}>
+                <Text>No access to camera</Text>
+            </View>
+        );
     }
 
     return(
