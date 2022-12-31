@@ -28,7 +28,19 @@ const ManageUsersScreen = ({ route, navigation }) => {
               console.log("Users not found.")
             }
         });
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        if (users) {
+            var temp = [];
+            users.forEach((user, index) => {
+                if (user.name.toLowerCase().includes(search.toLowerCase()) || user.number.includes(search)) {
+                    temp.push(user);
+                }
+            })
+            setFilteredUsers(temp);
+        }
+    }, [search]);
 
     const renderItem = ({ item, index}) => (
         <ListItem
@@ -45,21 +57,11 @@ const ManageUsersScreen = ({ route, navigation }) => {
     return(
         <View style={styles.container}>
             <TextInput 
-                placeholder="Search User" 
+                placeholder="Search Name or ID" 
                 search
                 style={styles.search}
                 value={search}
-                onChangeText={(text) => {
-                        setSearch(text);
-                        var temp = [];
-                        users.forEach((user, index) => {
-                            if (user.name.toLowerCase().includes(search.toLowerCase())) {
-                                temp.push(user);
-                            }
-                        })
-                        setFilteredUsers(temp);
-                    }
-                }
+                onChangeText={(text) => { setSearch(text); }}
             />
             <Button 
                 style={styles.button}

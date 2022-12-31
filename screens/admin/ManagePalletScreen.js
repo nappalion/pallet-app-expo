@@ -31,10 +31,23 @@ const ManagePalletScreen = ({ route, navigation }) => {
               setPallets(result);
               setFilteredPallets(result);
             } else {
-              console.log("Pallets not found.")
+              console.log("Pallets not found.");
             }
         });
     }, [])
+
+    useEffect(() => {
+        if (pallets) {
+            var temp = [];
+            pallets.forEach((pallet, index) => {
+                console.log(search);
+                if (pallet.name.toLowerCase().includes(search.toLowerCase()) || pallet.number.includes(search)) {
+                    temp.push(pallet);
+                }
+            })
+            setFilteredPallets(temp);
+        }
+    }, [search])
 
     const renderItem = ({ item, index}) => (
         <ListItem
@@ -53,21 +66,11 @@ const ManagePalletScreen = ({ route, navigation }) => {
     return(
         <View style={styles.container}>
             <TextInput 
-                placeholder="Search Item Name" 
+                placeholder="Search Name or Barcode" 
                 search
                 style={styles.search}
                 value={search}
-                onChangeText={(text) => {
-                        setSearch(text);
-                        var temp = [];
-                        pallets.forEach((pallet, index) => {
-                            if (pallet.name.toLowerCase().includes(search.toLowerCase())) {
-                                temp.push(pallet);
-                            }
-                        })
-                        setFilteredPallets(temp);
-                    }
-                }
+                onChangeText={(text) => { setSearch(text); }}
             />
             <Button 
                 style={styles.button}
