@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Alert } from "react-native";
+import { StyleSheet, View, Alert, ScrollView } from "react-native";
 import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 import { database } from "../../firebaseConfig.js"
@@ -52,7 +52,7 @@ const EditCreateUserScreen = ({ route, navigation }) => {
     }, [navigation]);
 
     return(
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <View>
                 <TextInput
                     title="Employee ID" 
@@ -144,7 +144,7 @@ const EditCreateUserScreen = ({ route, navigation }) => {
                     }
                 }}
             />
-        </View>
+        </ScrollView>
         
     );
 }
@@ -152,7 +152,6 @@ const EditCreateUserScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'space-between',
         alignContent: 'center',
         paddingLeft: 20,
         paddingRight: 20,

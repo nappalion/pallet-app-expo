@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { View, StyleSheet, Image, Alert } from "react-native";
+import { View, StyleSheet, Image, Alert, ScrollView } from "react-native";
 
 import TextInput from '../components/TextInput.js';
 import Button from '../components/Button.js';
@@ -30,80 +30,82 @@ const CalculateScreen = ({ route, navigation }) => {
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
 
     return(
-        <View style={styles.container}>
-            <View>
-                <TextInput 
-                    title="Barcode No." 
-                    placeholder="Enter a barcode number"
-                    value={ barcode }
-                    onChangeText={(text) => {
-                            setBarcode(text)
+        <ScrollView>
+            <View style={styles.container}>
+                <View>
+                    <TextInput 
+                        title="Barcode No." 
+                        placeholder="Enter a barcode number"
+                        value={ barcode }
+                        onChangeText={(text) => {
+                                setBarcode(text)
+                            }
+                        }   
+                    />
+                    <Button 
+                        text="CALCULATE" 
+                        style={ styles.button }
+                        onPress={ () => {
+                                if (barcode) {
+                                    palletExists(barcode).then((result) => {
+                                        if (result) {
+                                            navigation.navigate('Results', {
+                                                currUser: currUser,
+                                                dimensions: {
+                                                    length: Math.ceil(parseFloat(result.length)),
+                                                    width: Math.ceil(parseFloat(result.width)),
+                                                    height: Math.ceil(parseFloat(result.height))
+                                                }
+                    
+                                            })
+                                        }
+                                        else {
+                                            Alert.alert(
+                                                "Barcode doesn't exist.", 
+                                                "Please scan another barcode or contact your supervisor.",
+                                            )
+                                        }
+                                    });
+                                }
+                                else {
+                                    Alert.alert("Invalid Field.", "Please enter a valid barcode.")
+                                }
+                                
+                            }
                         }
-                    }   
-                />
-                <Button 
-                    text="CALCULATE" 
-                    style={ styles.button }
-                    onPress={ () => {
-                            if (barcode) {
-                                palletExists(barcode).then((result) => {
-                                    if (result) {
-                                        navigation.navigate('Results', {
-                                            currUser: currUser,
-                                            dimensions: {
-                                                length: Math.ceil(parseFloat(result.length)),
-                                                width: Math.ceil(parseFloat(result.width)),
-                                                height: Math.ceil(parseFloat(result.height))
-                                            }
+                    />
+                </View>
                 
-                                        })
-                                    }
-                                    else {
-                                        Alert.alert(
-                                            "Barcode doesn't exist.", 
-                                            "Please scan another barcode or contact your supervisor.",
-                                        )
-                                    }
-                                });
-                            }
-                            else {
-                                Alert.alert("Invalid Field.", "Please enter a valid barcode.")
-                            }
-                            
-                        }
-                    }
+                
+                <Image
+                    style={ styles.box } 
+                    source={require('../assets/box.png')}/>
+
+                <Button 
+                    text="SCAN AGAIN" 
+                    style={ styles.button }
+                    onPress={ () => { 
+                        console.log("Curr user: " + currUser)
+                        navigation.navigate('Barcode', { currUser: currUser }) 
+                    }}
                 />
             </View>
-            
-            
-            <Image
-                style={ styles.box } 
-                source={require('../assets/box.png')}/>
-
-            <Button 
-                text="SCAN AGAIN" 
-                style={ styles.button }
-                onPress={ () => { 
-                    console.log("Curr user: " + currUser)
-                    navigation.navigate('Barcode', { currUser: currUser }) 
-                }}
-            />
-        </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'space-between',
         alignContent: 'center',
+        justifyContent: 'space-between',
         paddingLeft: 20,
         paddingRight: 20,
         paddingTop: 10,
         paddingBottom: 10
     },
     box: {
-        flex: 0.6,
+        height: 300,
         resizeMode: 'contain',
         alignSelf: 'center'
     },

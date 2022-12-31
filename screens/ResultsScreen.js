@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { Scene, Vector3, MeshBasicMaterial, Mesh, AxesHelper, PerspectiveCamera, BoxGeometry, EdgesGeometry, LineSegments, LineBasicMaterial, Color} from "three"
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { Renderer } from "expo-three"
@@ -78,6 +78,7 @@ const ResultsScreen = ({ route, navigation }) => {
         camera.lookAt(point);
         camera.rotation.z = 3.7;
         camera.position.set(-80, 65, 80);
+
 
         let scene = null;
 
@@ -201,13 +202,17 @@ const ResultsScreen = ({ route, navigation }) => {
             }
 
             if (result != null) {
-                scene = new THREE.ObjectLoader().parse(JSON.parse(result.scene))
-                setNumPlaced(result.numPlaced)
+                scene = new THREE.ObjectLoader().parse(JSON.parse(result.scene));
+                let axes = new AxesHelper(100);
+                axes.position.x = -35;
+                axes.position.y = -25;
+                scene.add(axes) 
+                setNumPlaced(result.numPlaced);
             }
             else {
                 calculatePromise().then((result) => {
                     writePalletData(l, w, h, result.scene, result.numPlaced);
-                    setNumPlaced(result.numPlaced)
+                    setNumPlaced(result.numPlaced);
                 });
             }
 
@@ -215,6 +220,8 @@ const ResultsScreen = ({ route, navigation }) => {
                 requestAnimationFrame(render)
                 renderer.render(scene, camera)
         
+                camera.zoom = 1.2
+                camera.updateProjectionMatrix()
                 gl.endFrameEXP()
             }
         
@@ -224,7 +231,7 @@ const ResultsScreen = ({ route, navigation }) => {
 
 
     return(
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <SubHeader title="Box Dimensions: " details={`${l.toString()}" x ${w.toString()}" x ${h.toString()}"`}/>
             <GLView
                 onContextCreate={onContextCreate}
@@ -238,14 +245,13 @@ const ResultsScreen = ({ route, navigation }) => {
                 secondary
                 onPress={ () => { navigation.navigate('Barcode') }}
             />
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1, 
-        justifyContent: 'center', 
         alignContent: 'center', 
         paddingLeft: 20, 
         paddingRight: 20
