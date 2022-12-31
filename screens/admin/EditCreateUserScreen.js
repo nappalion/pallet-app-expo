@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Alert } from "react-native";
 import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
@@ -38,6 +38,18 @@ const EditCreateUserScreen = ({ route, navigation }) => {
     const [ fullName, setFullName ] = useState((route.params.fullName) ? route.params.fullName : "");
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
     const [ isNew, setIsNew ] = useState((route.params.isNew) ? route.params.isNew : "");
+
+    useEffect(() => {
+        if (isNew) {
+            navigation.setOptions({
+                headerTitle: "Add User"
+            });
+        } else {
+            navigation.setOptions({
+                headerTitle: "Edit User"
+            });
+        }
+    }, [navigation]);
 
     return(
         <View style={styles.container}>

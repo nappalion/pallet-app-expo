@@ -38,7 +38,7 @@ const BarcodeScreen = ({ route, navigation }) => {
         getBarCodeScannerPermissions();
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
                 <IconButton onPress={() => {                        

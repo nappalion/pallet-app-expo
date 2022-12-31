@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from "react-native";
 
 import { COLORS } from '../../colors';
@@ -49,6 +49,18 @@ const EditPalletScreen = ({ route, navigation }) => {
     const [ height, setHeight ] = useState((route.params.dimensions) ? route.params.dimensions.height.toString() : "" )
     const [ isNew, setIsNew ] = useState((route.params.isNew) ? route.params.isNew : "");
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
+
+    useEffect(() => {
+        if (isNew) {
+            navigation.setOptions({
+                headerTitle: "Add Item"
+            });
+        } else {
+            navigation.setOptions({
+                headerTitle: "Edit Item"
+            });
+        }
+    }, [navigation]);
 
     return(
         <ScrollView>

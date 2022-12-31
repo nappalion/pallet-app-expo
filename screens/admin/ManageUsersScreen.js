@@ -41,6 +41,7 @@ const ManageUsersScreen = ({ route, navigation }) => {
             setFilteredUsers(temp);
         }
     }, [search]);
+    
 
     const renderItem = ({ item, index}) => (
         <ListItem

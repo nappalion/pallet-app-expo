@@ -24,10 +24,12 @@ const App = () => {
         <Stack.Screen
           name="Login"
           component={LoginScreen}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Landing"
           component={LandingScreen}
+          options={{ headerTitle: "" }}
         />
         <Stack.Screen
           name="Barcode"
@@ -35,12 +37,14 @@ const App = () => {
           options={({navigation, route}) => ({
             headerRight: () => (
               <Button title="Open Form"/>
-            )
+            ),
+            headerTitle: "Scan Item"
           })}
         />
         <Stack.Screen
           name="Calculate"
           component={CalculateScreen}
+          options={{ headerTitle: "" }}
         />
         <Stack.Screen
           name="Results"
@@ -49,18 +53,22 @@ const App = () => {
         <Stack.Screen
           name="ManagePallet"
           component={ManagePalletScreen}
+          options={{ headerTitle: "Manage Pallets" }}
         />
         <Stack.Screen
           name="ManageUsers"
           component={ManageUsersScreen}
+          options={{ headerTitle: "Manage Users" }}
         />
         <Stack.Screen
           name="EditCreatePallet"
           component={EditPalletScreen}
+          options={{ headerTitle: "" }}
         />
         <Stack.Screen
           name="EditCreateUser"
           component={EditUserScreen}
+          options={{ headerTitle: "" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
