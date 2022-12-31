@@ -7,6 +7,7 @@ import Button from "../components/Button";
 
 import { database } from "../firebaseConfig.js"
 import { ref, child, set, get, remove } from "firebase/database";
+import IconButton from '../components/IconButton';
 
 const BarcodeScreen = ({ route, navigation }) => {
     const [currUser, setCurrUser] = useState((route.params?.currUser) ? route.params.currUser : "");
@@ -40,13 +41,14 @@ const BarcodeScreen = ({ route, navigation }) => {
     React.useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <Button onPress={() => {                        
-                    setScanned(true); 
-                    navigation.navigate("Calculate", {
-                        barcode: "",
-                        currUser: currUser
-                    })
-                }} text="Open Form"/>
+                <IconButton onPress={() => {                        
+                        setScanned(true); 
+                        navigation.navigate("Calculate", {
+                            barcode: "",
+                            currUser: currUser
+                        })
+                    }}
+                />
             )
         });
     }, [navigation]);
