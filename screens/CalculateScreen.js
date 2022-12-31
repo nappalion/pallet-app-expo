@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, Alert } from "react-native";
 
 import TextInput from '../components/TextInput.js';
 import Button from '../components/Button.js';
@@ -45,7 +45,8 @@ const CalculateScreen = ({ route, navigation }) => {
                     text="CALCULATE" 
                     style={ styles.button }
                     onPress={ () => {
-                            palletExists(barcode).then((result) => {
+                            if (barcode) {
+                                palletExists(barcode).then((result) => {
                                     if (result) {
                                         navigation.navigate('Results', {
                                             currUser: currUser,
@@ -58,10 +59,17 @@ const CalculateScreen = ({ route, navigation }) => {
                                         })
                                     }
                                     else {
-                                        console.log("Barcode doesn't exist. Please contact your supervisor.")
+                                        Alert.alert(
+                                            "Barcode doesn't exist.", 
+                                            "Please scan another barcode or contact your supervisor.",
+                                        )
                                     }
-                                }
-                            );
+                                });
+                            }
+                            else {
+                                Alert.alert("Invalid Field.", "Please enter a valid barcode.")
+                            }
+                            
                         }
                     }
                 />
@@ -95,7 +103,7 @@ const styles = StyleSheet.create({
         paddingBottom: 10
     },
     box: {
-        flex: 0.5,
+        flex: 0.6,
         resizeMode: 'contain',
         alignSelf: 'center'
     },

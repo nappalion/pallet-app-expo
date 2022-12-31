@@ -31,7 +31,7 @@ const ManagePalletScreen = ({ route, navigation }) => {
               setPallets(result);
               setFilteredPallets(result);
             } else {
-              console.log("Users not found.")
+              console.log("Pallets not found.")
             }
         });
     }, [])

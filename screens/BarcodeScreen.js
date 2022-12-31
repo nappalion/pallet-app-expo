@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Alert } from "react-native";
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { COLORS } from '../colors';
 
@@ -94,7 +94,18 @@ const BarcodeScreen = ({ route, navigation }) => {
                     })
                 }
                 else {
-                    console.log("Barcode doesn't exist.")
+                    Alert.alert(
+                        "Barcode doesn't exist.", 
+                        "Please scan another barcode or contact your supervisor.",
+                        [
+                            {
+                                text: "OK",
+                                onPress: () => {
+                                    setScanned(false)
+                                },
+                            },
+                        ],
+                    )
                 }
             });
         }
@@ -108,6 +119,7 @@ const BarcodeScreen = ({ route, navigation }) => {
           </View>  
         );
     }
+
     if (hasPermission === false) {
         return(
             <View style={styles.container}>

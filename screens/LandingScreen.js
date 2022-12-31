@@ -59,6 +59,10 @@ const LandingScreen = ({ route, navigation }) => {
                     text="LOGOUT"
                     secondary
                     style={ styles.button }
+                    onPress = { () => {
+                            navigation.popToTop();
+                        } 
+                    }
                 />
             </View>
         </View>

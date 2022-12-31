@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Alert } from "react-native";
 
 import { COLORS } from '../../colors';
 
@@ -8,6 +8,10 @@ import Button from "../../components/Button";
 
 import { database } from "../../firebaseConfig.js"
 import { ref, child, set, get, remove } from "firebase/database";
+
+function isNumeric(str) {
+    return !isNaN(str) && !isNaN(parseFloat(str))
+}
 
 function palletExists(barcode) {
     return get(child(ref(database), `barcodes/${barcode}`)).then((snapshot) => {
@@ -106,13 +110,22 @@ const EditPalletScreen = ({ route, navigation }) => {
                         style={ styles.button }
                         onPress={ () => {
                                 palletExists(barcode).then((result) => {
-                                    if (result && isNew) {
-                                        console.log("Pallet already exists.")
+                                    if (!(itemName && barcode && length && width && height)) {
+                                        Alert.alert("Invalid field.", "Please enter a barcode, item name, length, width, and height.")
+                                    }
+                                    else if (result && isNew) {
+                                        Alert.alert("Item already exists.", "Please find and edit/delete the existing item.")
                                     }
                                     else if (itemName && barcode && length && width && height) { 
-                                        writePalletData(barcode, itemName, Math.ceil(parseFloat(length)).toString(), Math.ceil(parseFloat(width)).toString(), Math.ceil(parseFloat(height)).toString())
-                                        if (isNew) {
-                                            navigation.goBack();
+                                        if (isNumeric(length) && isNumeric(width) && isNumeric(height)) {
+                                            writePalletData(barcode, itemName, Math.ceil(parseFloat(length)).toString(), Math.ceil(parseFloat(width)).toString(), Math.ceil(parseFloat(height)).toString())
+                                            Alert.alert("Success!")
+                                            if (isNew) {
+                                                navigation.goBack();
+                                            }
+                                        }
+                                        else {
+                                            Alert.alert("Invalid field.", "Please enter a valid number for the length, width, and height.")
                                         }
                                     } 
                                 })
@@ -125,15 +138,21 @@ const EditPalletScreen = ({ route, navigation }) => {
                         style={ styles.button }
                         onPress={ () => {
                                 if (length && width && height) {
-                                    navigation.navigate('Results', {
-                                        currUser: currUser,
-                                        dimensions: {
-                                            length: Math.ceil(parseFloat(length)),
-                                            width: Math.ceil(parseFloat(width)),
-                                            height: Math.ceil(parseFloat(height))
-                                        }
-
-                                    })
+                                    if (isNumeric(length) && isNumeric(width) && isNumeric(height)) {
+                                        navigation.navigate('Results', {
+                                            currUser: currUser,
+                                            dimensions: {
+                                                length: Math.ceil(parseFloat(length)),
+                                                width: Math.ceil(parseFloat(width)),
+                                                height: Math.ceil(parseFloat(height))
+                                            }
+    
+                                        })
+                                    } else {
+                                        Alert.alert("Invalid field.", "Please enter a valid number for the length, width, and height.")
+                                    }
+                                } else {
+                                    Alert.alert("Invalid field.", "Please enter a length, width, and height.")
                                 }
                             }
                         }
@@ -151,9 +170,23 @@ const EditPalletScreen = ({ route, navigation }) => {
                     style={ styles.button }
                     secondary
                     onPress={ () => { 
-                        console.log("User deleted.");
-                        deletePallet(barcode);
-                        navigation.goBack();
+                        Alert.alert(
+                            "Are you sure you want to delete this item?",
+                            "Deleting this item will permanently remove this pallet's existing data.",
+                            [
+                                {
+                                    text: "DELETE",
+                                    onPress: () => {
+                                        deletePallet(barcode);
+                                        navigation.goBack();
+                                    },
+                                },
+                                {
+                                    text: "CANCEL",
+                                }
+                            ],
+                        )
+
                     }}
                 />
             </View>

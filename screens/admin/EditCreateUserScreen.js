@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Alert } from "react-native";
 import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 import { database } from "../../firebaseConfig.js"
@@ -28,6 +28,7 @@ function userExists(empId) {
 
 function deleteUser(empId) {
     remove(ref(database, 'users/' + empId));
+    remove(ref(database, 'admin/' + empId));
 }
 
 
@@ -53,7 +54,7 @@ const EditCreateUserScreen = ({ route, navigation }) => {
                 />
                 <TextInput
                     title="Full Name" 
-                    placeholder="Enter your full name."
+                    placeholder="Enter a full name."
                     value={ fullName }
                     onChangeText={(text) => {
                             setFullName(text)
@@ -65,15 +66,20 @@ const EditCreateUserScreen = ({ route, navigation }) => {
                     text="SAVE CHANGES" 
                     onPress={ () => { 
                         userExists(empId).then((result) => {
-                            if (result && isNew) {
-                                console.log("User already exists.")
+                            if (!fullName || !empId) {
+                                Alert.alert("Invalid field.", "Please enter a full name or employee ID.")
+                            }
+                            else if (result && isNew) {
+                                
+                                Alert.alert("User already exists.", "Please find and edit/delete existing user.")
                             }
                             else if (fullName && empId) { 
                                 writeUserData(empId, fullName) 
+                                Alert.alert("Success!")
                                 if (isNew) {
                                     navigation.goBack();
                                 }
-                            } 
+                            }
                         })
                     }}
                 />
@@ -85,10 +91,39 @@ const EditCreateUserScreen = ({ route, navigation }) => {
                 onPress={ () => {
                     console.log("User deleted.");
                     if (currUser.empId == empId) {
-                        console.log("Deleting this user will log you out.");
+                        Alert.alert(
+                            "Are you sure you want to delete this user?",
+                            "Deleting this user will log you out and permanently remove this user's existing data.",
+                            [
+                                {
+                                    text: "DELETE",
+                                    onPress: () => {
+                                        deleteUser(empId);
+                                        navigation.popToTop();
+                                    },
+                                },
+                                {
+                                    text: "CANCEL",
+                                }
+                            ],
+                        )
                     } else {
-                        deleteUser(empId);
-                        navigation.goBack();
+                        Alert.alert(
+                            "Are you sure you want to delete this user?",
+                            "Deleting this user will permanently remove this user's existing data.",
+                            [
+                                {
+                                    text: "DELETE",
+                                    onPress: () => {
+                                        deleteUser(empId);
+                                        navigation.goBack();
+                                    },
+                                },
+                                {
+                                    text: "CANCEL",
+                                }
+                            ],
+                        )
                     }
                 }}
             />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View, Alert } from "react-native";
 import { COLORS } from '../colors';
 import { database } from "../firebaseConfig.js"
 import { ref, child, get } from "firebase/database";
@@ -67,14 +67,15 @@ const LoginScreen = ({ navigation }) => {
                                                     currUser: { empId: empId, isAdmin: isAdmin }
                                                 })
                                             } else {
-                                                console.log("User not found.")
+                                                Alert.alert("User not found.", "Please enter another ID or contact your supervisor.")
                                             }
                                         }
                                     )
                                 });
                             }
                             else {
-                                console.log("Employee ID cannot be empty!")
+                                
+                                Alert.alert("Invalid Field.", "Please enter or scan an employee ID.")
                             }
                         }
                     }
