@@ -131,9 +131,12 @@ const EditPalletScreen = ({ route, navigation }) => {
                                     else if (itemName && barcode && length && width && height) { 
                                         if (isNumeric(length) && isNumeric(width) && isNumeric(height)) {
                                             writePalletData(barcode, itemName, Math.ceil(parseFloat(length)).toString(), Math.ceil(parseFloat(width)).toString(), Math.ceil(parseFloat(height)).toString())
-                                            Alert.alert("Success!")
+                                            
                                             if (isNew) {
+                                                Alert.alert("Success", "Item created successfully!")
                                                 navigation.goBack();
+                                            } else {
+                                                Alert.alert("Success", "Item edited successfully!")
                                             }
                                         }
                                         else {
@@ -190,7 +193,9 @@ const EditPalletScreen = ({ route, navigation }) => {
                                     text: "DELETE",
                                     onPress: () => {
                                         deletePallet(barcode);
-                                        navigation.goBack();
+                                        navigation.navigate('ManagePallet', {
+                                            currUser: currUser
+                                        })
                                     },
                                 },
                                 {

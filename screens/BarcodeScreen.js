@@ -9,10 +9,13 @@ import { database } from "../firebaseConfig.js"
 import { ref, child, set, get, remove } from "firebase/database";
 import IconButton from '../components/IconButton';
 
+import { useFocusEffect } from '@react-navigation/native';
+
 const BarcodeScreen = ({ route, navigation }) => {
     const [currUser, setCurrUser] = useState((route.params?.currUser) ? route.params.currUser : "");
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
+    const [key, setKey] = useState(0);
 
     function palletExists(barcode) {
         return get(child(ref(database), `barcodes/${barcode}`)).then((snapshot) => {
@@ -38,7 +41,7 @@ const BarcodeScreen = ({ route, navigation }) => {
         getBarCodeScannerPermissions();
     }, []);
 
-    useEffect(() => {
+    useFocusEffect(() => {
         navigation.setOptions({
             headerRight: () => (
                 <IconButton onPress={() => {                        
@@ -51,10 +54,11 @@ const BarcodeScreen = ({ route, navigation }) => {
                 />
             )
         });
-    }, [navigation]);
+    });
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
+            setKey(key + 1);
             setScanned(false);
         });
         return unsubscribe;
@@ -111,7 +115,7 @@ const BarcodeScreen = ({ route, navigation }) => {
                 }
             });
         }
-
+        setKey(key + 1);
     };
 
     if (hasPermission === null) {
@@ -133,7 +137,8 @@ const BarcodeScreen = ({ route, navigation }) => {
     return(
         <View>
             <BarCodeScanner
-                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                key={key}
+                onBarCodeScanned={scanned ? () => { console.log("hello"); return undefined } : handleBarCodeScanned}
                 style={{height: "100%", width: "100%"}}
             />
         </View>

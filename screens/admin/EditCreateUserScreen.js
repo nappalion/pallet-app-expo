@@ -87,9 +87,14 @@ const EditCreateUserScreen = ({ route, navigation }) => {
                             }
                             else if (fullName && empId) { 
                                 writeUserData(empId, fullName) 
-                                Alert.alert("Success!")
+                                
                                 if (isNew) {
-                                    navigation.goBack();
+                                    Alert.alert("Success", "User created successfully!")
+                                    navigation.navigate('ManageUsers', {
+                                        currUser: currUser
+                                    }) 
+                                } else {
+                                    Alert.alert("Success", "User edited successfully!")
                                 }
                             }
                         })
