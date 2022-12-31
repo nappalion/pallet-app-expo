@@ -1,11 +1,107 @@
 import React, { useState } from 'react';
-import { StyleSheet } from "react-native";
+
+import { View, StyleSheet, Image } from "react-native";
+
+import TextInput from '../components/TextInput.js';
+import Button from '../components/Button.js';
+
+import { database } from "../firebaseConfig.js"
+import { ref, child, set, get, remove } from "firebase/database";
+
+
+
+function palletExists(barcode) {
+    return get(child(ref(database), `barcodes/${barcode}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log("Item exists.");
+          return snapshot.val();
+        } else {
+          console.log("Item does not exist.");
+          return false;
+        }
+    }).catch((error) => {
+        console.error(error);
+        return false;
+    });
+}
 
 const CalculateScreen = ({ route, navigation }) => {
+    const [ barcode, setBarcode ] = useState((route.params.barcode) ? route.params.barcode : "" )
+    const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
 
+    return(
+        <View style={styles.container}>
+            <View>
+                <TextInput 
+                    title="Barcode No." 
+                    placeholder="Enter a barcode number"
+                    value={ barcode }
+                    onChangeText={(text) => {
+                            setBarcode(text)
+                        }
+                    }   
+                />
+                <Button 
+                    text="CALCULATE" 
+                    style={ styles.button }
+                    onPress={ () => {
+                            palletExists(barcode).then((result) => {
+                                    if (result) {
+                                        navigation.navigate('Results', {
+                                            currUser: currUser,
+                                            dimensions: {
+                                                length: Math.ceil(parseFloat(result.length)),
+                                                width: Math.ceil(parseFloat(result.width)),
+                                                height: Math.ceil(parseFloat(result.height))
+                                            }
+                
+                                        })
+                                    }
+                                    else {
+                                        console.log("Barcode doesn't exist. Please contact your supervisor.")
+                                    }
+                                }
+                            );
+                        }
+                    }
+                />
+            </View>
+            
+            
+            <Image
+                style={ styles.box } 
+                source={require('../assets/box.png')}/>
+
+            <Button 
+                text="SCAN AGAIN" 
+                style={ styles.button }
+                onPress={ () => { 
+                    console.log("Curr user: " + currUser)
+                    navigation.navigate('Barcode', { currUser: currUser }) 
+                }}
+            />
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'space-between',
+        alignContent: 'center',
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingTop: 10,
+        paddingBottom: 10
+    },
+    box: {
+        flex: 0.5,
+        resizeMode: 'contain',
+        alignSelf: 'center'
+    },
+    button: {
+        marginTop: 15
+    }
 });
 
 export default CalculateScreen;

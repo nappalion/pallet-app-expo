@@ -9,7 +9,7 @@ import { database } from "../firebaseConfig.js"
 import { ref, child, set, get, remove } from "firebase/database";
 
 const BarcodeScreen = ({ route, navigation }) => {
-    const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
+    const [currUser, setCurrUser] = useState((route.params?.currUser) ? route.params.currUser : "");
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
 
@@ -42,11 +42,21 @@ const BarcodeScreen = ({ route, navigation }) => {
             headerRight: () => (
                 <Button onPress={() => {                        
                     setScanned(true); 
-                    navigation.navigate("Calculate")
+                    navigation.navigate("Calculate", {
+                        barcode: "",
+                        currUser: currUser
+                    })
                 }} text="Open Form"/>
             )
         });
     }, [navigation]);
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            setScanned(false);
+        });
+        return unsubscribe;
+    }, [scanned]);
 
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
@@ -62,7 +72,7 @@ const BarcodeScreen = ({ route, navigation }) => {
                             width: result.width,
                             height: result.height
                         }
-                    })
+                    });
                 }
                 else {
                     console.log("Barcode doesn't exist.")
