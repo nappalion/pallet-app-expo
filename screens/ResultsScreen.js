@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
-import { View, StyleSheet, ScrollView } from "react-native";
+import React, {useEffect, useState} from 'react';
+import { View, StyleSheet, ScrollView, Text} from "react-native";
 import { Scene, Vector3, MeshBasicMaterial, Mesh, AxesHelper, PerspectiveCamera, BoxGeometry, EdgesGeometry, LineSegments, LineBasicMaterial, Color} from "three"
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { Renderer } from "expo-three"
 import { GLView } from 'expo-gl';
+import ProgressBar from 'react-native-progress/Bar';
 
 import SubHeader from '../components/SubHeader';
 import Button from '../components/Button';
@@ -15,13 +16,16 @@ import { database } from "../firebaseConfig.js"
 import { ref, child, get, set } from "firebase/database";
 import { scaleLongestSideToSize } from 'expo-three/build/utils';
 
+import FastImage from 'react-native-fast-image';
+
 
 const ResultsScreen = ({ route, navigation }) => {
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
-    const [ l, setLength ] = useState((route.params.dimensions) ? route.params.dimensions.length.toString() : "" )
-    const [ w, setWidth ] = useState((route.params.dimensions) ? route.params.dimensions.width.toString() : "" )
-    const [ h, setHeight ] = useState((route.params.dimensions) ? route.params.dimensions.height.toString() : "" )
-    const [numPlaced, setNumPlaced] = useState("")
+    const [ l, setLength ] = useState((route.params.dimensions) ? route.params.dimensions.length.toString() : "" );
+    const [ w, setWidth ] = useState((route.params.dimensions) ? route.params.dimensions.width.toString() : "" );
+    const [ h, setHeight ] = useState((route.params.dimensions) ? route.params.dimensions.height.toString() : "" );
+    const [numPlaced, setNumPlaced] = useState("");
+    const [ loaded, setLoaded ] = useState(false);
 
     function palletExists(l, w, h) {
         // Get the unique orientations using a set
@@ -79,7 +83,6 @@ const ResultsScreen = ({ route, navigation }) => {
         camera.rotation.z = 3.7;
         camera.position.set(-80, 65, 80);
 
-
         let scene = null;
 
         palletExists(l, w, h).then(function(result) {
@@ -102,6 +105,7 @@ const ResultsScreen = ({ route, navigation }) => {
     
                 let coreColor = cubes[0][6].toString();
                 let sections = {};
+
                 
                 for (let i = 0; i < cubes.length; i++) {
                     let cubeColorKey = cubes[i][6].toString();
@@ -159,7 +163,8 @@ const ResultsScreen = ({ route, navigation }) => {
                         color: color,
                     });
                     let cube = new Mesh(section, material);
-    
+
+                    
                     let line = new LineSegments(
                         edges,
                         new LineBasicMaterial({ color: 0x000000 })
@@ -208,11 +213,13 @@ const ResultsScreen = ({ route, navigation }) => {
                 axes.position.y = -25;
                 scene.add(axes) 
                 setNumPlaced(result.numPlaced);
+                setLoaded(true);
             }
             else {
                 calculatePromise().then((result) => {
                     writePalletData(l, w, h, result.scene, result.numPlaced);
                     setNumPlaced(result.numPlaced);
+                    setLoaded(true);
                 });
             }
 
@@ -233,6 +240,15 @@ const ResultsScreen = ({ route, navigation }) => {
     return(
         <ScrollView style={styles.container}>
             <SubHeader title="Box Dimensions: " details={`${l.toString()}" x ${w.toString()}" x ${h.toString()}"`}/>
+            { !loaded 
+                && <View>
+                    <Text style={styles.text}>Calculating pallet configuration...</Text>
+                    <FastImage
+                        source={ require('../assets/loading.gif') }
+                        style={{ width: 200, height: 200 }}
+                    />
+                </View>
+            }
             <GLView
                 onContextCreate={onContextCreate}
                 style = {styles.pallet}
@@ -265,6 +281,13 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 20
+    },
+    progress: {
+        alignSelf: "center"
+    },
+    text: {
+        color: COLORS.dark_purple,
+        fontWeight: 'bold',
     }
 });
 
