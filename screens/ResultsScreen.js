@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import { View, StyleSheet, ScrollView, Text} from "react-native";
+import { View, StyleSheet, ScrollView, Text, Image} from "react-native";
 import { Scene, Vector3, MeshBasicMaterial, Mesh, AxesHelper, PerspectiveCamera, BoxGeometry, EdgesGeometry, LineSegments, LineBasicMaterial, Color} from "three"
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { Renderer } from "expo-three"
 import { GLView } from 'expo-gl';
-import ProgressBar from 'react-native-progress/Bar';
 
 import SubHeader from '../components/SubHeader';
 import Button from '../components/Button';
@@ -15,8 +14,6 @@ import { COLORS } from '../colors';
 import { database } from "../firebaseConfig.js"
 import { ref, child, get, set } from "firebase/database";
 import { scaleLongestSideToSize } from 'expo-three/build/utils';
-
-import FastImage from 'react-native-fast-image';
 
 
 const ResultsScreen = ({ route, navigation }) => {
@@ -243,16 +240,16 @@ const ResultsScreen = ({ route, navigation }) => {
             { !loaded 
                 && <View>
                     <Text style={styles.text}>Calculating pallet configuration...</Text>
-                    <FastImage
-                        source={ require('../assets/loading.gif') }
-                        style={{ width: 200, height: 200 }}
-                    />
+                    <Text style={styles.text}>Since this is the first calculation, it may take some time (1 minute max).</Text>
+                    <Image source={require('../assets/loading.gif')} style={styles.loading}/>
                 </View>
             }
+
             <GLView
                 onContextCreate={onContextCreate}
                 style = {styles.pallet}
             />
+
             <SubHeader title="Boxes Placed: " details={`${numPlaced}`}/>
             <SubHeader title="Pallet Dimensions: " details={'40" x 48" x 52"'}/>
             <Button 
@@ -282,12 +279,16 @@ const styles = StyleSheet.create({
     button: {
         marginTop: 20
     },
-    progress: {
-        alignSelf: "center"
+    loading: {
+        height: 50,
+        alignSelf: "center",
+        margin: 20,
+        resizeMode: 'contain'
     },
     text: {
         color: COLORS.dark_purple,
         fontWeight: 'bold',
+        marginTop: 10
     }
 });
 
