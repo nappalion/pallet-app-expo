@@ -71,9 +71,9 @@ const CalculateScreen = ({ route, navigation }) => {
                                             navigation.navigate('Results', {
                                                 currUser: currUser,
                                                 dimensions: {
-                                                    length: Math.ceil(parseFloat(result.length)),
-                                                    width: Math.ceil(parseFloat(result.width)),
-                                                    height: Math.ceil(parseFloat(result.height))
+                                                    length: parseFloat(result.length),
+                                                    width: parseFloat(result.width),
+                                                    height: parseFloat(result.height)
                                                 }
                                             })
                                         }

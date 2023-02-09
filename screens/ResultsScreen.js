@@ -18,9 +18,10 @@ import { scaleLongestSideToSize } from 'expo-three/build/utils';
 
 const ResultsScreen = ({ route, navigation }) => {
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
-    const [ l, setLength ] = useState((route.params.dimensions) ? route.params.dimensions.length.toString() : "" );
-    const [ w, setWidth ] = useState((route.params.dimensions) ? route.params.dimensions.width.toString() : "" );
-    const [ h, setHeight ] = useState((route.params.dimensions) ? route.params.dimensions.height.toString() : "" );
+    const [ dimensions, setDimensions ] = useState(route.params.dimensions || "")
+    const [ l, setLength ] = useState((route.params.dimensions) ? Math.ceil(route.params.dimensions.length).toString() : "" );
+    const [ w, setWidth ] = useState((route.params.dimensions) ? Math.ceil(route.params.dimensions.width).toString() : "" );
+    const [ h, setHeight ] = useState((route.params.dimensions) ? Math.ceil(route.params.dimensions.height).toString() : "" );
     const [numPlaced, setNumPlaced] = useState("");
     const [ loaded, setLoaded ] = useState(false);
 
@@ -33,7 +34,7 @@ const ResultsScreen = ({ route, navigation }) => {
             const result = snapshot.val();
             for (const pallet in result) {
                 for (let j = 0; j < orientations.length; j++) {
-                    if (pallet == `${orientations[j][0].toString()}x${orientations[j][1].toString()}x${orientations[j][2].toString()}`) {
+                    if (pallet == `${Math.ceil(orientations[j][0]).toString()}x${Math.ceil(orientations[j][1]).toString()}x${Math.ceil(orientations[j][2]).toString()}`) {
                         console.log("Pallet exists.");
                         return result[pallet];
                     }
@@ -83,6 +84,7 @@ const ResultsScreen = ({ route, navigation }) => {
         let scene = null;
 
         palletExists(l, w, h).then(function(result) {
+            console.log("Calculating with: " + l + ", " + w + ", " + h + ".")
 
             function calculatePallet(l, w, h) {
                     
@@ -236,7 +238,7 @@ const ResultsScreen = ({ route, navigation }) => {
 
     return(
         <ScrollView style={styles.container}>
-            <SubHeader title="Box Dimensions: " details={`${l.toString()}" x ${w.toString()}" x ${h.toString()}"`}/>
+            <SubHeader title="Box Dimensions: " details={`${dimensions.length.toString()}" x ${dimensions.width.toString()}" x ${dimensions.height.toString()}"`}/>
             { !loaded 
                 && <View>
                     <Text style={styles.text}>Calculating pallet configuration...</Text>

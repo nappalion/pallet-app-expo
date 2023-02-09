@@ -73,7 +73,7 @@ const EditCreateUserScreen = ({ route, navigation }) => {
         if (inputRefs.empId.current) {
             inputRefs.empId.current.focus();
         }
-    }, [inputRefs.empId.current]);
+    }, []);
 
     useEffect(() => {
         if (isNew) {

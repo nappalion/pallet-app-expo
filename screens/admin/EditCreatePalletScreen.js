@@ -66,7 +66,7 @@ const EditPalletScreen = ({ route, navigation }) => {
         if (inputRefs.barcode.current) {
             inputRefs.barcode.current.focus();
         }
-    }, [inputRefs.barcode.current]);
+    }, []);
 
     useEffect(() => {
         if (isNew) {
@@ -184,7 +184,7 @@ const EditPalletScreen = ({ route, navigation }) => {
                                     }
                                     else if (itemName && barcode && length && width && height) { 
                                         if (isNumeric(length) && isNumeric(width) && isNumeric(height)) {
-                                            writePalletData(barcode.trim(), itemName.trim(), Math.ceil(parseFloat(length)).toString().trim(), Math.ceil(parseFloat(width)).toString().trim(), Math.ceil(parseFloat(height)).toString().trim())
+                                            writePalletData(barcode.trim(), itemName.trim(), parseFloat(length).toString().trim(), parseFloat(width).toString().trim(), parseFloat(height).toString().trim())
                                             
                                             if (isNew) {
                                                 Alert.alert("Success", "Item created successfully!")
@@ -212,9 +212,9 @@ const EditPalletScreen = ({ route, navigation }) => {
                                         navigation.navigate('Results', {
                                             currUser: currUser,
                                             dimensions: {
-                                                length: Math.ceil(parseFloat(length)),
-                                                width: Math.ceil(parseFloat(width)),
-                                                height: Math.ceil(parseFloat(height))
+                                                length: parseFloat(length),
+                                                width: parseFloat(width),
+                                                height: parseFloat(height)
                                             }
     
                                         })

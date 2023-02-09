@@ -20,7 +20,9 @@ const BarcodeScreen = ({ route, navigation }) => {
     const previousScreenName = route.params.previousScreenName
 
     function palletExists(barcode) {
-        return get(child(ref(database), `barcodes/${barcode}`)).then((snapshot) => {
+        let filteredBarcode = barcode.replace(/[^0-9]/g, "")
+        console.log(filteredBarcode)
+        return get(child(ref(database), `barcodes/${filteredBarcode}`)).then((snapshot) => {
             if (snapshot.exists()) {
               console.log("Item exists.");
               return snapshot.val();
@@ -75,9 +77,9 @@ const BarcodeScreen = ({ route, navigation }) => {
                     navigation.navigate('Results', {
                         currUser: currUser,
                         dimensions: {
-                            length: Math.ceil(parseFloat(result.length)),
-                            width: Math.ceil(parseFloat(result.width)),
-                            height: Math.ceil(parseFloat(result.height))
+                            length: parseFloat(result.length),
+                            width: parseFloat(result.width),
+                            height: parseFloat(result.height)
                         }
                     })
                 }
@@ -106,9 +108,9 @@ const BarcodeScreen = ({ route, navigation }) => {
                         currUser: currUser,
                         barcode: data,
                         dimensions: {
-                            length: Math.ceil(parseFloat(result.length)),
-                            width: Math.ceil(parseFloat(result.width)),
-                            height: Math.ceil(parseFloat(result.height))
+                            length: parseFloat(result.length),
+                            width: parseFloat(result.width),
+                            height: parseFloat(result.height)
                         }
                     })
                 }
@@ -178,7 +180,7 @@ const BarcodeScreen = ({ route, navigation }) => {
         <View>
             <BarCodeScanner
                 key={key}
-                onBarCodeScanned={scanned ? () => { console.log("hello"); return undefined } : handleBarCodeScanned}
+                onBarCodeScanned={scanned ? () => { return undefined } : handleBarCodeScanned}
                 style={{height: "100%", width: "100%"}}
             />
         </View>
