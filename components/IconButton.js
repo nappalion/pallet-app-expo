@@ -6,7 +6,7 @@ function IconButton(props) {
     return(
         <TouchableOpacity {...props}>
             <Image
-                source={require("../assets/pencil-fill.png")}
+                source={require("../assets/barcode-box.png")}
             />
         </TouchableOpacity>
     );

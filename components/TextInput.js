@@ -27,7 +27,7 @@ function TextInput(props) {
                     editable = { !props.notEditable }
                     placeholderTextColor = { COLORS.light_purple }
                     secureTextEntry={hidePassword}
-                    ref={props.ref}/>
+                    ref={props.forwardedRef}/>
 
                 {props.isPassword && 
                     <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>

@@ -94,9 +94,13 @@ const BarcodeScreen = ({ route, navigation }) => {
             palletExists(data).then((result) => {
                 if (result) {
                     console.log(result)
-                    navigation.navigate('Calculate', {
-                        barcode: data,
+                    navigation.navigate('Results', {
                         currUser: currUser,
+                        dimensions: {
+                            length: Math.ceil(parseFloat(result.length)),
+                            width: Math.ceil(parseFloat(result.width)),
+                            height: Math.ceil(parseFloat(result.height))
+                        }
                     })
                 }
                 else {

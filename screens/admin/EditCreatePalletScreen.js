@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert } from "react-native";
+import { View, StyleSheet, ScrollView, Alert, Image } from "react-native";
 
 import { COLORS } from '../../colors';
 
@@ -8,6 +8,8 @@ import Button from "../../components/Button";
 
 import { database } from "../../firebaseConfig.js"
 import { ref, child, set, get, remove } from "firebase/database";
+
+import CameraIcon from '../../assets/camera-fill.js';
 
 function isNumeric(str) {
     return !isNaN(str) && !isNaN(parseFloat(str))
@@ -47,8 +49,9 @@ const EditPalletScreen = ({ route, navigation }) => {
     const [ length, setLength ] = useState((route.params.dimensions) ? route.params.dimensions.length.toString() : "" )
     const [ width, setWidth ] = useState((route.params.dimensions) ? route.params.dimensions.width.toString() : "" )
     const [ height, setHeight ] = useState((route.params.dimensions) ? route.params.dimensions.height.toString() : "" )
-    const [ isNew, setIsNew ] = useState((route.params.isNew) ? route.params.isNew : "");
+    const [ isNew, setIsNew ] = useState((route.params.isNew) ? route.params.isNew : false);
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
+
 
     useEffect(() => {
         if (isNew) {
@@ -62,20 +65,40 @@ const EditPalletScreen = ({ route, navigation }) => {
         }
     }, [navigation]);
 
+    useEffect(() => {
+        setBarcode(route.params?.barcode || '');
+    }, [route.params])
+
+
     return(
         <ScrollView>
             <View style={styles.container}>
                 <View>
-                    <TextInput 
-                        title="Barcode No." 
-                        placeholder="Enter a barcode number"
-                        notEditable={ !isNew }
-                        value={ barcode }
-                        onChangeText={(text) => {
-                                setBarcode(text)
-                            }
-                        }   
-                    />
+                    <View style={styles.barcodeView}>
+                        <TextInput 
+                            title="Barcode No." 
+                            style={styles.barcodeInput}
+                            placeholder="Enter a barcode number"
+                            notEditable={ !isNew }
+                            value={ barcode }
+                            onChangeText={(text) => {
+                                    setBarcode(text)
+                                    console.log("barcode is " + barcode)
+                                }
+                            }   
+                        />
+
+                    { isNew 
+                        && <CameraIcon
+                            style={styles.barcodeScanButton}
+                            onPress={() => { navigation.navigate('Barcode', { currUser: currUser }) }}
+                        />
+                    }
+
+
+
+                    </View>
+
 
                     <TextInput 
                         title="Item Name" 
@@ -137,6 +160,7 @@ const EditPalletScreen = ({ route, navigation }) => {
                                                 navigation.goBack();
                                             } else {
                                                 Alert.alert("Success", "Item edited successfully!")
+                                                navigation.goBack();
                                             }
                                         }
                                         else {
@@ -173,11 +197,6 @@ const EditPalletScreen = ({ route, navigation }) => {
                         }
                     />
 
-                    <Button 
-                        text="SCAN AGAIN" 
-                        style={ styles.button }
-                        onPress={ () => { navigation.navigate('Barcode', { currUser: currUser }) }}
-                    />
                 </View>
 
                 <Button 
@@ -223,6 +242,19 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 15
+    },
+    barcodeView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        
+    },
+    barcodeInput: {
+        flex: 1,
+        marginRight: 10
+    },
+    barcodeScanButton: {
+        marginBottom: 15,
+        alignSelf: 'flex-end'
     }
 });
 

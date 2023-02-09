@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 import { View, StyleSheet, Image, Alert, ScrollView } from "react-native";
+
+import { TextInput as RNTextInput } from 'react-native';
 
 import TextInput from '../components/TextInput.js';
 import Button from '../components/Button.js';
 
 import { database } from "../firebaseConfig.js"
 import { ref, child, set, get, remove } from "firebase/database";
-
+import CameraIcon from '../assets/camera-fill.js';
 
 
 function palletExists(barcode) {
@@ -26,24 +28,40 @@ function palletExists(barcode) {
 }
 
 const CalculateScreen = ({ route, navigation }) => {
+    let inputRef = useRef(null);
     const [ barcode, setBarcode ] = useState((route.params.barcode) ? route.params.barcode : "" )
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
+
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, []);
 
     return(
         <ScrollView>
             <View style={styles.container}>
                 <View>
-                    <TextInput 
-                        title="Barcode No." 
-                        placeholder="Enter a barcode number"
-                        value={ barcode }
-                        onChangeText={(text) => {
-                                setBarcode(text)
-                            }
-                        }   
-                    />
+                    <View style={styles.barcodeView}>
+                        <TextInput 
+                            style={styles.barcodeInput}
+                            title="Barcode No." 
+                            placeholder="Enter a barcode number"
+                            forwardedRef={inputRef}
+                            value={ barcode }
+                            onChangeText={(text) => {
+                                    setBarcode(text)
+                                }
+                            }   
+                        />
+                        <CameraIcon
+                            style={styles.barcodeScanButton}
+                            onPress={() => { navigation.navigate('Barcode', { currUser: currUser }) }}
+                        />
+                    </View>
+                    
                     <Button 
-                        text="CALCULATE" 
+                        text="ENTER" 
                         style={ styles.button }
                         onPress={ () => {
                                 if (barcode) {
@@ -56,7 +74,6 @@ const CalculateScreen = ({ route, navigation }) => {
                                                     width: Math.ceil(parseFloat(result.width)),
                                                     height: Math.ceil(parseFloat(result.height))
                                                 }
-                    
                                             })
                                         }
                                         else {
@@ -80,15 +97,6 @@ const CalculateScreen = ({ route, navigation }) => {
                 <Image
                     style={ styles.box } 
                     source={require('../assets/box.png')}/>
-
-                <Button 
-                    text="SCAN AGAIN" 
-                    style={ styles.button }
-                    onPress={ () => { 
-                        console.log("Curr user: " + currUser)
-                        navigation.navigate('Barcode', { currUser: currUser }) 
-                    }}
-                />
             </View>
         </ScrollView>
     );
@@ -106,11 +114,25 @@ const styles = StyleSheet.create({
     },
     box: {
         height: 300,
+        marginTop: 30,
         resizeMode: 'contain',
         alignSelf: 'center'
     },
     button: {
         marginTop: 15
+    },
+    barcodeView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        
+    },
+    barcodeInput: {
+        flex: 1,
+        marginRight: 10
+    },
+    barcodeScanButton: {
+        marginBottom: 15,
+        alignSelf: 'flex-end'
     }
 });
 

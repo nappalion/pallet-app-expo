@@ -95,6 +95,7 @@ const EditCreateUserScreen = ({ route, navigation }) => {
                                     }) 
                                 } else {
                                     Alert.alert("Success", "User edited successfully!")
+                                    navigation.goBack();
                                 }
                             }
                         })

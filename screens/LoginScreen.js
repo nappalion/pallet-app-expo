@@ -47,7 +47,7 @@ const LoginScreen = ({ navigation }) => {
             <Image style={styles.logo} source={require('../assets/logo.png')}/>
             <View style={styles.inputContainer}>
                 <TextInput 
-                    placeholder="Please enter an email..." 
+                    placeholder="Please enter an employee ID..." 
                     title="Employee ID"  
                     value={empId}
                     onChangeText={(text) => {
