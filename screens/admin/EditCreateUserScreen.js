@@ -120,49 +120,52 @@ const EditCreateUserScreen = ({ route, navigation }) => {
                     }}
                 />
             </View>
-            <Button 
-                style={styles.button}
-                text="DELETE USER" 
-                secondary
-                onPress={ () => {
-                    console.log("User deleted.");
-                    if (currUser.empId == empId) {
-                        Alert.alert(
-                            "Are you sure you want to delete this user?",
-                            "Deleting this user will log you out and permanently remove this user's existing data.",
-                            [
-                                {
-                                    text: "DELETE",
-                                    onPress: () => {
-                                        deleteUser(empId);
-                                        navigation.popToTop();
+
+            { !isNew 
+                && <Button 
+                    style={styles.button}
+                    text="DELETE USER" 
+                    secondary
+                    onPress={ () => {
+                        console.log("User deleted.");
+                        if (currUser.empId == empId) {
+                            Alert.alert(
+                                "Are you sure you want to delete this user?",
+                                "Deleting this user will log you out and permanently remove this user's existing data.",
+                                [
+                                    {
+                                        text: "DELETE",
+                                        onPress: () => {
+                                            deleteUser(empId);
+                                            navigation.popToTop();
+                                        },
                                     },
-                                },
-                                {
-                                    text: "CANCEL",
-                                }
-                            ],
-                        )
-                    } else {
-                        Alert.alert(
-                            "Are you sure you want to delete this user?",
-                            "Deleting this user will permanently remove this user's existing data.",
-                            [
-                                {
-                                    text: "DELETE",
-                                    onPress: () => {
-                                        deleteUser(empId);
-                                        navigation.goBack();
+                                    {
+                                        text: "CANCEL",
+                                    }
+                                ],
+                            )
+                        } else {
+                            Alert.alert(
+                                "Are you sure you want to delete this user?",
+                                "Deleting this user will permanently remove this user's existing data.",
+                                [
+                                    {
+                                        text: "DELETE",
+                                        onPress: () => {
+                                            deleteUser(empId);
+                                            navigation.goBack();
+                                        },
                                     },
-                                },
-                                {
-                                    text: "CANCEL",
-                                }
-                            ],
-                        )
-                    }
-                }}
-            />
+                                    {
+                                        text: "CANCEL",
+                                    }
+                                ],
+                            )
+                        }
+                    }}
+                />
+            }
         </ScrollView>
         
     );

@@ -230,32 +230,34 @@ const EditPalletScreen = ({ route, navigation }) => {
 
                 </View>
 
-                <Button 
-                    text="DELETE" 
-                    style={ styles.button }
-                    secondary
-                    onPress={ () => { 
-                        Alert.alert(
-                            "Are you sure you want to delete this item?",
-                            "Deleting this item will permanently remove this pallet's existing data.",
-                            [
-                                {
-                                    text: "DELETE",
-                                    onPress: () => {
-                                        deletePallet(barcode);
-                                        navigation.navigate('ManagePallet', {
-                                            currUser: currUser
-                                        })
+                { !isNew 
+                    && <Button 
+                        text="DELETE" 
+                        style={ styles.button }
+                        secondary
+                        onPress={ () => { 
+                            Alert.alert(
+                                "Are you sure you want to delete this item?",
+                                "Deleting this item will permanently remove this pallet's existing data.",
+                                [
+                                    {
+                                        text: "DELETE",
+                                        onPress: () => {
+                                            deletePallet(barcode);
+                                            navigation.navigate('ManagePallet', {
+                                                currUser: currUser
+                                            })
+                                        },
                                     },
-                                },
-                                {
-                                    text: "CANCEL",
-                                }
-                            ],
-                        )
+                                    {
+                                        text: "CANCEL",
+                                    }
+                                ],
+                            )
 
-                    }}
-                />
+                        }}
+                    />
+                }
             </View>
         </ScrollView>
         
