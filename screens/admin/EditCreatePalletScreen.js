@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, ScrollView, Alert, Image } from "react-native";
 
 import { COLORS } from '../../colors';
@@ -53,6 +53,21 @@ const EditPalletScreen = ({ route, navigation }) => {
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
 
 
+    const inputRefs = {
+        barcode: useRef(null),
+        itemName: useRef(null),
+        length: useRef(null),
+        width: useRef(null),
+        height: useRef(null)
+    };
+
+
+    useEffect(() => {
+        if (inputRefs.barcode.current) {
+            inputRefs.barcode.current.focus();
+        }
+    }, [inputRefs.barcode.current]);
+
     useEffect(() => {
         if (isNew) {
             navigation.setOptions({
@@ -86,6 +101,7 @@ const EditPalletScreen = ({ route, navigation }) => {
                             title="Barcode No." 
                             style={styles.barcodeInput}
                             placeholder="Enter a barcode number"
+                            forwardedRef={inputRefs.barcode}
                             notEditable={ !isNew }
                             value={ barcode }
                             onChangeText={(text) => {
@@ -93,6 +109,7 @@ const EditPalletScreen = ({ route, navigation }) => {
                                     console.log("barcode is " + barcode)
                                 }
                             }   
+                            onSubmitEditing={() => { inputRefs.itemName.current.focus(); }}
                         />
 
                     { isNew 
@@ -110,36 +127,43 @@ const EditPalletScreen = ({ route, navigation }) => {
                     <TextInput 
                         title="Item Name" 
                         placeholder="Enter an item name"
+                        forwardedRef={inputRefs.itemName}
                         value={ itemName }
                         onChangeText={(text) => {
                                 setItemName(text)
                             }
                         }   
+                        onSubmitEditing={() => { inputRefs.length.current.focus(); }}
                     />
 
                     <TextInput 
                         title="Length" 
                         placeholder="Enter a length"
+                        forwardedRef={inputRefs.length}
                         value={ length }
                         onChangeText={(text) => {
                                 setLength(text)
                             }
                         }   
+                        onSubmitEditing={() => { inputRefs.width.current.focus(); }}
                     />
 
                     <TextInput 
                         title="Width" 
                         placeholder="Enter a width"
+                        forwardedRef={inputRefs.width}
                         value={ width }
                         onChangeText={(text) => {
                                 setWidth(text)
                             }
                         }   
+                        onSubmitEditing={() => { inputRefs.height.current.focus(); }}
                     />
                     
                     <TextInput 
                         title="Height" 
                         placeholder="Enter a height"
+                        forwardedRef={inputRefs.height}
                         value={ height }
                         onChangeText={(text) => {
                                 setHeight(text)

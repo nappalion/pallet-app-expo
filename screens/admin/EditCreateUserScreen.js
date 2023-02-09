@@ -39,6 +39,42 @@ const EditCreateUserScreen = ({ route, navigation }) => {
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
     const [ isNew, setIsNew ] = useState((route.params.isNew) ? route.params.isNew : "");
 
+    const inputRefs = {
+        empId: useRef(null),
+        fullName: useRef(null),
+    };
+
+    const submitChanges = () => {
+        userExists(empId).then((result) => {
+            if (!fullName || !empId) {
+                Alert.alert("Invalid field.", "Please enter a full name or employee ID.")
+            }
+            else if (result && isNew) {
+                
+                Alert.alert("User already exists.", "Please find and edit/delete existing user.")
+            }
+            else if (fullName && empId) { 
+                writeUserData(empId.trim(), fullName.trim()) 
+                
+                if (isNew) {
+                    Alert.alert("Success", "User created successfully!")
+                    navigation.navigate('ManageUsers', {
+                        currUser: currUser
+                    }) 
+                } else {
+                    Alert.alert("Success", "User edited successfully!")
+                    navigation.goBack();
+                }
+            }
+        });
+    }
+
+    useEffect(() => {
+        if (inputRefs.empId.current) {
+            inputRefs.empId.current.focus();
+        }
+    }, [inputRefs.empId.current]);
+
     useEffect(() => {
         if (isNew) {
             navigation.setOptions({
@@ -57,16 +93,19 @@ const EditCreateUserScreen = ({ route, navigation }) => {
                 <TextInput
                     title="Employee ID" 
                     placeholder="Enter or scan an employee ID."
+                    forwardedRef={inputRefs.empId}
                     notEditable={ !isNew }
                     value={ empId }
                     onChangeText={(text) => {
                             setEmpId(text)
                         }
                     }   
+                    onSubmitEditing={() => { inputRefs.fullName.current.focus(); }}
                 />
                 <TextInput
                     title="Full Name" 
                     placeholder="Enter a full name."
+                    forwardedRef={inputRefs.fullName}
                     value={ fullName }
                     onChangeText={(text) => {
                             setFullName(text)
@@ -77,28 +116,7 @@ const EditCreateUserScreen = ({ route, navigation }) => {
                     style={styles.button}
                     text="SAVE CHANGES" 
                     onPress={ () => { 
-                        userExists(empId).then((result) => {
-                            if (!fullName || !empId) {
-                                Alert.alert("Invalid field.", "Please enter a full name or employee ID.")
-                            }
-                            else if (result && isNew) {
-                                
-                                Alert.alert("User already exists.", "Please find and edit/delete existing user.")
-                            }
-                            else if (fullName && empId) { 
-                                writeUserData(empId.trim(), fullName.trim()) 
-                                
-                                if (isNew) {
-                                    Alert.alert("Success", "User created successfully!")
-                                    navigation.navigate('ManageUsers', {
-                                        currUser: currUser
-                                    }) 
-                                } else {
-                                    Alert.alert("Success", "User edited successfully!")
-                                    navigation.goBack();
-                                }
-                            }
-                        })
+                        submitChanges()
                     }}
                 />
             </View>

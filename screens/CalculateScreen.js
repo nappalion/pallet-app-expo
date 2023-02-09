@@ -36,7 +36,7 @@ const CalculateScreen = ({ route, navigation }) => {
         if (inputRef.current) {
             inputRef.current.focus();
         }
-    }, []);
+    }, [inputRef]);
 
     return(
         <ScrollView>
