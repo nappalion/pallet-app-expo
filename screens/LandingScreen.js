@@ -26,7 +26,8 @@ const LandingScreen = ({ route, navigation }) => {
                         text="SCAN BOX"
                         style={ styles.button }
                         onPress={ () => { navigation.navigate("Barcode", {
-                            currUser: currUser
+                            currUser: currUser,
+                            previousScreenName: "Landing"
                         }) }}
                     />
 

@@ -17,6 +17,8 @@ const BarcodeScreen = ({ route, navigation }) => {
     const [scanned, setScanned] = useState(false);
     const [key, setKey] = useState(0);
 
+    const previousScreenName = route.params.previousScreenName
+
     function palletExists(barcode) {
         return get(child(ref(database), `barcodes/${barcode}`)).then((snapshot) => {
             if (snapshot.exists()) {
@@ -66,31 +68,7 @@ const BarcodeScreen = ({ route, navigation }) => {
 
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
-        if ( currUser.isAdmin ) {
-            palletExists(data).then((result) => {
-                if (result) {
-                    navigation.navigate('EditCreatePallet', {
-                        currUser: currUser,
-                        barcode: data,
-                        itemName: result.name,
-                        dimensions: { 
-                            length: result.length,
-                            width: result.width,
-                            height: result.height
-                        }
-                    });
-                }
-                else {
-                    console.log("Barcode doesn't exist.")
-                    navigation.navigate('EditCreatePallet', {
-                        barcode: data,
-                        currUser: currUser,
-                        isNew: true
-                    })
-                }
-            });
-        }
-        else {
+        if (previousScreenName == "Landing") {
             palletExists(data).then((result) => {
                 if (result) {
                     console.log(result)
@@ -118,6 +96,64 @@ const BarcodeScreen = ({ route, navigation }) => {
                     )
                 }
             });
+        }
+
+        else if (previousScreenName == "Calculate") {
+            palletExists(data).then((result) => {
+                if (result) {
+                    console.log(result)
+                    navigation.navigate('Calculate', {
+                        currUser: currUser,
+                        barcode: data,
+                        dimensions: {
+                            length: Math.ceil(parseFloat(result.length)),
+                            width: Math.ceil(parseFloat(result.width)),
+                            height: Math.ceil(parseFloat(result.height))
+                        }
+                    })
+                }
+                else {
+                    Alert.alert(
+                        "Barcode doesn't exist.", 
+                        "Please scan another barcode or contact your supervisor.",
+                        [
+                            {
+                                text: "OK",
+                                onPress: () => {
+                                    setScanned(false)
+                                },
+                            },
+                        ],
+                    )
+                }
+            });
+        }
+
+        else if (previousScreenName == "EditCreatePallet") {
+            if ( currUser.isAdmin ) {
+                palletExists(data).then((result) => {
+                    if (result) {
+                        navigation.navigate('EditCreatePallet', {
+                            currUser: currUser,
+                            barcode: data,
+                            itemName: result.name,
+                            dimensions: { 
+                                length: result.length,
+                                width: result.width,
+                                height: result.height
+                            }
+                        });
+                    }
+                    else {
+                        console.log("Barcode doesn't exist.")
+                        navigation.navigate('EditCreatePallet', {
+                            barcode: data,
+                            currUser: currUser,
+                            isNew: true
+                        })
+                    }
+                });
+            }
         }
         setKey(key + 1);
     };

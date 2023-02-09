@@ -49,7 +49,7 @@ const EditPalletScreen = ({ route, navigation }) => {
     const [ length, setLength ] = useState((route.params.dimensions) ? route.params.dimensions.length.toString() : "" )
     const [ width, setWidth ] = useState((route.params.dimensions) ? route.params.dimensions.width.toString() : "" )
     const [ height, setHeight ] = useState((route.params.dimensions) ? route.params.dimensions.height.toString() : "" )
-    const [ isNew, setIsNew ] = useState((route.params.isNew) ? route.params.isNew : false);
+    const [ isNew, setIsNew ] = useState((route.params.isNew) ? route.params.isNew : "");
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
 
 
@@ -63,11 +63,18 @@ const EditPalletScreen = ({ route, navigation }) => {
                 headerTitle: "Edit Item"
             });
         }
-    }, [navigation]);
+    }, [navigation, route.params]);
 
     useEffect(() => {
         setBarcode(route.params?.barcode || '');
+        setItemName(route.params?.itemName || '');
+        setIsNew(route.params?.isNew || '');
+        setLength(route.params?.dimensions?.length || '');
+        setWidth(route.params?.dimensions?.width || '');
+        setHeight(route.params?.dimensions?.height || '');
     }, [route.params])
+
+    
 
 
     return(
@@ -91,7 +98,7 @@ const EditPalletScreen = ({ route, navigation }) => {
                     { isNew 
                         && <CameraIcon
                             style={styles.barcodeScanButton}
-                            onPress={() => { navigation.navigate('Barcode', { currUser: currUser }) }}
+                            onPress={() => { navigation.navigate('Barcode', { currUser: currUser, previousScreenName: "EditCreatePallet" }) }}
                         />
                     }
 

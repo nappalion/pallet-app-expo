@@ -56,7 +56,7 @@ const CalculateScreen = ({ route, navigation }) => {
                         />
                         <CameraIcon
                             style={styles.barcodeScanButton}
-                            onPress={() => { navigation.navigate('Barcode', { currUser: currUser }) }}
+                            onPress={() => { navigation.navigate('Barcode', { currUser: currUser, previousScreenName: "Calculate" }) }}
                         />
                     </View>
                     

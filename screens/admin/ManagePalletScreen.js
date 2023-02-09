@@ -8,6 +8,18 @@ import TextInput from '../../components/TextInput';
 import { database } from "../../firebaseConfig.js"
 import { ref, child, onValue } from "firebase/database";
 
+const sortByName = (data) => {
+    return data.sort((a, b) => {
+    if (a.name < b.name) {
+        return -1;
+    }
+    if (a.name > b.name) {
+        return 1;
+    }
+    return 0;
+    });
+}
+
 const ManagePalletScreen = ({ route, navigation }) => {
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
     const [ search, setSearch ] = useState("");
@@ -28,8 +40,8 @@ const ManagePalletScreen = ({ route, navigation }) => {
                         "height": item[1].height
                     }})
               })
-              setPallets(result);
-              setFilteredPallets(result);
+              setPallets(sortByName(result));
+              setFilteredPallets(sortByName(result));
             } else {
               console.log("Pallets not found.");
             }
