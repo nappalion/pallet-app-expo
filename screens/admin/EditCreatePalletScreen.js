@@ -160,7 +160,7 @@ const EditPalletScreen = ({ route, navigation }) => {
                                     }
                                     else if (itemName && barcode && length && width && height) { 
                                         if (isNumeric(length) && isNumeric(width) && isNumeric(height)) {
-                                            writePalletData(barcode, itemName, Math.ceil(parseFloat(length)).toString(), Math.ceil(parseFloat(width)).toString(), Math.ceil(parseFloat(height)).toString())
+                                            writePalletData(barcode.trim(), itemName.trim(), Math.ceil(parseFloat(length)).toString().trim(), Math.ceil(parseFloat(width)).toString().trim(), Math.ceil(parseFloat(height)).toString().trim())
                                             
                                             if (isNew) {
                                                 Alert.alert("Success", "Item created successfully!")

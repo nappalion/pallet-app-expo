@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, View, Alert } from "react-native";
+import { Image, StyleSheet, View, Alert, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { COLORS } from '../colors';
 import { database } from "../firebaseConfig.js"
 import { ref, child, get } from "firebase/database";
@@ -43,45 +43,48 @@ const LoginScreen = ({ navigation }) => {
     const [ empId, setEmpId ] = useState("")
 
     return(
-        <View style={styles.container}>
-            <Image style={styles.logo} source={require('../assets/logo.png')}/>
-            <View style={styles.inputContainer}>
-                <TextInput 
-                    placeholder="Please enter an employee ID..." 
-                    title="Employee ID"  
-                    value={empId}
-                    onChangeText={(text) => {
-                            setEmpId(text)
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
+            <View style={styles.container}>
+                <Image style={styles.logo} source={require('../assets/logo.png')}/>
+                <View style={styles.inputContainer}>
+                    <TextInput 
+                        placeholder="Please enter an employee ID..." 
+                        title="Employee ID"  
+                        value={empId}
+                        onChangeText={(text) => {
+                                setEmpId(text)
+                            }
                         }
-                    }
-                />
-                <Button
-                    text="LOGIN"
-                    style={styles.button}
-                    onPress={ () => {
-                            if (empId != "") {
-                                userExists(empId).then( (userExists) => {
-                                    isAdmin(empId).then( (isAdmin) => {
-                                            if (userExists) {
-                                                navigation.navigate('Landing', {
-                                                    currUser: { empId: empId, isAdmin: isAdmin }
-                                                })
-                                            } else {
-                                                Alert.alert("User not found.", "Please enter another ID or contact your supervisor.")
+                    />
+                    <Button
+                        text="LOGIN"
+                        style={styles.button}
+                        onPress={ () => {
+                                if (empId != "") {
+                                    let trimmedEmpId = empId.trim()
+                                    userExists(trimmedEmpId).then( (userExists) => {
+                                        isAdmin(trimmedEmpId).then( (isAdmin) => {
+                                                if (userExists) {
+                                                    navigation.navigate('Landing', {
+                                                        currUser: { empId: trimmedEmpId, isAdmin: isAdmin }
+                                                    })
+                                                } else {
+                                                    Alert.alert("User not found.", "Please enter another ID or contact your supervisor.")
+                                                }
                                             }
-                                        }
-                                    )
-                                });
-                            }
-                            else {
-                                
-                                Alert.alert("Invalid Field.", "Please enter or scan an employee ID.")
+                                        )
+                                    });
+                                }
+                                else {
+                                    
+                                    Alert.alert("Invalid Field.", "Please enter or scan an employee ID.")
+                                }
                             }
                         }
-                    }
-                />
+                    />
+                </View>
             </View>
-        </View>
+        </TouchableWithoutFeedback>
     );
 };
 

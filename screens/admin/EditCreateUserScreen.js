@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Alert, ScrollView } from "react-native";
 import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
@@ -86,7 +86,7 @@ const EditCreateUserScreen = ({ route, navigation }) => {
                                 Alert.alert("User already exists.", "Please find and edit/delete existing user.")
                             }
                             else if (fullName && empId) { 
-                                writeUserData(empId, fullName) 
+                                writeUserData(empId.trim(), fullName.trim()) 
                                 
                                 if (isNew) {
                                     Alert.alert("Success", "User created successfully!")

@@ -65,7 +65,8 @@ const CalculateScreen = ({ route, navigation }) => {
                         style={ styles.button }
                         onPress={ () => {
                                 if (barcode) {
-                                    palletExists(barcode).then((result) => {
+                                    let trimmedBarcode = barcode.trim()
+                                    palletExists(trimmedBarcode).then((result) => {
                                         if (result) {
                                             navigation.navigate('Results', {
                                                 currUser: currUser,
