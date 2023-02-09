@@ -8,6 +8,17 @@ import { database } from "../../firebaseConfig.js"
 import { ref, child, onValue } from "firebase/database";
 import ListItem from '../../components/ListItem';
 
+const sortByName = (data) => {
+    return data.sort((a, b) => {
+    if (a.name < b.name) {
+        return -1;
+    }
+    if (a.name > b.name) {
+        return 1;
+    }
+    return 0;
+    });
+}
 
 const ManageUsersScreen = ({ route, navigation }) => {
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
@@ -22,8 +33,8 @@ const ManageUsersScreen = ({ route, navigation }) => {
               Object.entries(snapshot.val()).forEach((item) => {
                 result.push({name: item[1].name, number: item[0]})
               })
-              setUsers(result);
-              setFilteredUsers(result);
+              setUsers(sortByName(result));
+              setFilteredUsers(sortByName(result));
             } else {
               console.log("Users not found.")
             }
