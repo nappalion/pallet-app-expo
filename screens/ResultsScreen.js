@@ -51,6 +51,17 @@ const ResultsScreen = ({ route, navigation }) => {
                 ),
             });
         }
+        else {
+            navigation.setOptions({
+                headerLeft: () => (
+                    <HeaderBackButton
+                        onPress={() => {
+                            navigation.goBack()
+                        }}
+                    />
+                ),
+            });
+        }
     }, [navigation])
 
 
