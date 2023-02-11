@@ -4,6 +4,8 @@ import { Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import { HeaderBackButton } from '@react-navigation/elements'
+
 import LandingScreen from './screens/LandingScreen'
 import CalculateScreen from './screens/CalculateScreen'
 import ResultsScreen from './screens/ResultsScreen'
@@ -49,6 +51,10 @@ const App = () => {
         <Stack.Screen
           name="Results"
           component={ResultsScreen}
+          options={{ 
+            headerLeft: () => ( <HeaderBackButton />),
+            headerTitle: "" 
+          }}
         />
         <Stack.Screen
           name="ManagePallet"

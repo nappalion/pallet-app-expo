@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import { View, StyleSheet, ScrollView, Text, Image} from "react-native";
+import { HeaderBackButton } from '@react-navigation/elements'
 import { Scene, Vector3, MeshBasicMaterial, Mesh, AxesHelper, PerspectiveCamera, BoxGeometry, EdgesGeometry, LineSegments, LineBasicMaterial, Color} from "three"
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { Renderer } from "expo-three"
@@ -8,6 +9,7 @@ import { GLView } from 'expo-gl';
 import SubHeader from '../components/SubHeader';
 import Button from '../components/Button';
 
+
 import { getBestPallet } from "../pallet-configuration"
 import { COLORS } from '../colors';
 
@@ -15,15 +17,41 @@ import { database } from "../firebaseConfig.js"
 import { ref, child, get, set } from "firebase/database";
 import { scaleLongestSideToSize } from 'expo-three/build/utils';
 
+import { Button as RNButton } from 'react-native';
+
 
 const ResultsScreen = ({ route, navigation }) => {
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
     const [ dimensions, setDimensions ] = useState(route.params.dimensions || "")
+    const [ itemName, setItemName ] = useState((route.params.itemName) ? route.params.itemName : "" )
     const [ l, setLength ] = useState((route.params.dimensions) ? Math.ceil(route.params.dimensions.length).toString() : "" );
     const [ w, setWidth ] = useState((route.params.dimensions) ? Math.ceil(route.params.dimensions.width).toString() : "" );
     const [ h, setHeight ] = useState((route.params.dimensions) ? Math.ceil(route.params.dimensions.height).toString() : "" );
+    const [ previousScreenName, setPreviousScreenName ] = useState((route.params.previousScreenName) ? route.params.previousScreenName : "" );
     const [numPlaced, setNumPlaced] = useState("");
     const [ loaded, setLoaded ] = useState(false);
+
+    useLayoutEffect(() => {
+        
+        if (previousScreenName == "Calculate") {
+            navigation.setOptions({
+                headerLeft: () => (
+                    <HeaderBackButton
+                        onPress={() => {
+                        
+                            console.log("Previous Screen Name: " + previousScreenName)
+                            navigation.navigate('Calculate', {
+                                currUser: currUser,
+                                barcode: "",
+                                previousScreenName: previousScreenName
+                            })
+                        }}
+                    />
+                ),
+            });
+        }
+    }, [navigation])
+
 
     function palletExists(l, w, h) {
         // Get the unique orientations using a set
@@ -238,11 +266,15 @@ const ResultsScreen = ({ route, navigation }) => {
 
     return(
         <ScrollView style={styles.container}>
+            { itemName
+                && <SubHeader title="Item Name: " details={`${itemName}`}/>
+            }
+
             <SubHeader title="Box Dimensions: " details={`${dimensions.length.toString()}" x ${dimensions.width.toString()}" x ${dimensions.height.toString()}"`}/>
             { !loaded 
                 && <View>
                     <Text style={styles.text}>Calculating pallet configuration...</Text>
-                    <Text style={styles.text}>Since this is the first calculation, it may take some time (1 minute max).</Text>
+                    <Text style={styles.text}>Since this is the first calculation, it may take some time (2 minute max).</Text>
                     <Image source={require('../assets/loading.gif')} style={styles.loading}/>
                 </View>
             }
@@ -252,13 +284,16 @@ const ResultsScreen = ({ route, navigation }) => {
                 style = {styles.pallet}
             />
 
-            <SubHeader title="Boxes Placed: " details={`${numPlaced}`}/>
+            <SubHeader title="TIHI: " details={`${numPlaced}`}/>
             <SubHeader title="Pallet Dimensions: " details={'40" x 48" x 52"'}/>
             <Button 
                 text="SCAN AGAIN" 
                 style={styles.button}
                 secondary
-                onPress={ () => { navigation.navigate('Barcode') }}
+                onPress={ () => { navigation.navigate("Barcode", {
+                    currUser: currUser,
+                    previousScreenName: "Landing"
+                }) }}
             />
         </ScrollView>
     );

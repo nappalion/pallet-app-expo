@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 import { View, StyleSheet, Image, Alert, ScrollView } from "react-native";
 
-import { TextInput as RNTextInput } from 'react-native';
+import { StackActions } from '@react-navigation/native';
+
 
 import TextInput from '../components/TextInput.js';
 import Button from '../components/Button.js';
@@ -27,10 +28,40 @@ function palletExists(barcode) {
     });
 }
 
+
+
 const CalculateScreen = ({ route, navigation }) => {
     let inputRef = useRef(null);
     const [ barcode, setBarcode ] = useState((route.params.barcode) ? route.params.barcode : "" )
     const [ currUser, setCurrUser ] = useState((route.params.currUser) ? route.params.currUser : "");
+
+    const calculatePallet = () => {
+        if (barcode) {
+            let trimmedBarcode = barcode.trim()
+            palletExists(trimmedBarcode).then((result) => {
+                if (result) {
+                    navigation.replace('Results', {
+                        currUser: currUser,
+                        dimensions: {
+                            length: parseFloat(result.length),
+                            width: parseFloat(result.width),
+                            height: parseFloat(result.height)
+                        },
+                        previousScreenName: "Calculate"
+                    })
+                }
+                else {
+                    Alert.alert(
+                        "Barcode doesn't exist.", 
+                        "Please scan another barcode or contact your supervisor.",
+                    )
+                }
+            });
+        }
+        else {
+            Alert.alert("Invalid Field.", "Please enter a valid barcode.")
+        }
+    }
 
     useEffect(() => {
         if (inputRef.current) {
@@ -53,6 +84,7 @@ const CalculateScreen = ({ route, navigation }) => {
                                     setBarcode(text)
                                 }
                             }   
+                            onSubmitEditing={() => { calculatePallet() }}
                         />
                         <CameraIcon
                             style={styles.barcodeScanButton}
@@ -64,31 +96,7 @@ const CalculateScreen = ({ route, navigation }) => {
                         text="ENTER" 
                         style={ styles.button }
                         onPress={ () => {
-                                if (barcode) {
-                                    let trimmedBarcode = barcode.trim()
-                                    palletExists(trimmedBarcode).then((result) => {
-                                        if (result) {
-                                            navigation.navigate('Results', {
-                                                currUser: currUser,
-                                                dimensions: {
-                                                    length: parseFloat(result.length),
-                                                    width: parseFloat(result.width),
-                                                    height: parseFloat(result.height)
-                                                }
-                                            })
-                                        }
-                                        else {
-                                            Alert.alert(
-                                                "Barcode doesn't exist.", 
-                                                "Please scan another barcode or contact your supervisor.",
-                                            )
-                                        }
-                                    });
-                                }
-                                else {
-                                    Alert.alert("Invalid Field.", "Please enter a valid barcode.")
-                                }
-                                
+                                calculatePallet()
                             }
                         }
                     />

@@ -115,7 +115,7 @@ const EditPalletScreen = ({ route, navigation }) => {
                     { isNew 
                         && <CameraIcon
                             style={styles.barcodeScanButton}
-                            onPress={() => { navigation.navigate('Barcode', { currUser: currUser, previousScreenName: "EditCreatePallet" }) }}
+                            onPress={() => { navigation.navigate('Barcode', { currUser: currUser, previousScreenName: "EditCreatePallet"}) }}
                         />
                     }
 
@@ -172,7 +172,7 @@ const EditPalletScreen = ({ route, navigation }) => {
                     />
 
                     <Button 
-                        text="SAVE CHANGES" 
+                        text="ENTER" 
                         style={ styles.button }
                         onPress={ () => {
                                 palletExists(barcode).then((result) => {
@@ -186,12 +186,31 @@ const EditPalletScreen = ({ route, navigation }) => {
                                         if (isNumeric(length) && isNumeric(width) && isNumeric(height)) {
                                             writePalletData(barcode.trim(), itemName.trim(), parseFloat(length).toString().trim(), parseFloat(width).toString().trim(), parseFloat(height).toString().trim())
                                             
-                                            if (isNew) {
-                                                Alert.alert("Success", "Item created successfully!")
-                                                navigation.goBack();
+                                            // if (isNew) {
+                                            //     Alert.alert("Success", "Item created successfully!")
+                                            //     navigation.goBack();
+                                            // } else {
+                                            //     Alert.alert("Success", "Item edited successfully!")
+                                            //     navigation.goBack();
+                                            // }
+
+                                            // Calculate Pallet Dimensions
+                                            if (length && width && height) {
+                                                if (isNumeric(length) && isNumeric(width) && isNumeric(height)) {
+                                                    navigation.navigate('Results', {
+                                                        currUser: currUser,
+                                                        dimensions: {
+                                                            length: parseFloat(length),
+                                                            width: parseFloat(width),
+                                                            height: parseFloat(height)
+                                                        },
+                                                        itemName: itemName
+                                                    })
+                                                } else {
+                                                    Alert.alert("Invalid field.", "Please enter a valid number for the length, width, and height.")
+                                                }
                                             } else {
-                                                Alert.alert("Success", "Item edited successfully!")
-                                                navigation.goBack();
+                                                Alert.alert("Invalid field.", "Please enter a length, width, and height.")
                                             }
                                         }
                                         else {
@@ -199,31 +218,6 @@ const EditPalletScreen = ({ route, navigation }) => {
                                         }
                                     } 
                                 })
-                            }
-                        }
-                    />
-
-                    <Button 
-                        text="CALCULATE" 
-                        style={ styles.button }
-                        onPress={ () => {
-                                if (length && width && height) {
-                                    if (isNumeric(length) && isNumeric(width) && isNumeric(height)) {
-                                        navigation.navigate('Results', {
-                                            currUser: currUser,
-                                            dimensions: {
-                                                length: parseFloat(length),
-                                                width: parseFloat(width),
-                                                height: parseFloat(height)
-                                            }
-    
-                                        })
-                                    } else {
-                                        Alert.alert("Invalid field.", "Please enter a valid number for the length, width, and height.")
-                                    }
-                                } else {
-                                    Alert.alert("Invalid field.", "Please enter a length, width, and height.")
-                                }
                             }
                         }
                     />
@@ -274,7 +268,7 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     button: {
-        marginTop: 15
+        marginTop: 40
     },
     barcodeView: {
         flexDirection: 'row',

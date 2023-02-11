@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, Alert } from "react-native";
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { COLORS } from '../colors';
 
+
 import Button from "../components/Button";
 
 import { database } from "../firebaseConfig.js"
@@ -52,7 +53,7 @@ const BarcodeScreen = ({ route, navigation }) => {
                         setScanned(true); 
                         navigation.navigate("Calculate", {
                             barcode: "",
-                            currUser: currUser
+                            currUser: currUser,
                         })
                     }}
                 />
@@ -80,7 +81,9 @@ const BarcodeScreen = ({ route, navigation }) => {
                             length: parseFloat(result.length),
                             width: parseFloat(result.width),
                             height: parseFloat(result.height)
-                        }
+                        },
+                        itemName: result.name,
+                        previousScreenName: previousScreenName
                     })
                 }
                 else {
@@ -107,11 +110,7 @@ const BarcodeScreen = ({ route, navigation }) => {
                     navigation.navigate('Calculate', {
                         currUser: currUser,
                         barcode: data,
-                        dimensions: {
-                            length: parseFloat(result.length),
-                            width: parseFloat(result.width),
-                            height: parseFloat(result.height)
-                        }
+                        previousScreenName: previousScreenName
                     })
                 }
                 else {
@@ -143,7 +142,8 @@ const BarcodeScreen = ({ route, navigation }) => {
                                 length: result.length,
                                 width: result.width,
                                 height: result.height
-                            }
+                            },
+                            previousScreenName: previousScreenName
                         });
                     }
                     else {
