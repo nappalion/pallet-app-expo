@@ -40,6 +40,7 @@ const ResultsScreen = ({ route, navigation }) => {
                         onPress={() => {
                         
                             console.log("Previous Screen Name: " + previousScreenName)
+                            navigation.pop()
                             navigation.navigate('Calculate', {
                                 currUser: currUser,
                                 barcode: "",
